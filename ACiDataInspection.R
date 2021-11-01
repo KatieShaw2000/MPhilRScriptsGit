@@ -49,6 +49,9 @@ ACiData <- ACiData[order(Plot, Repeat)] #Order dataframe by ascending plot and r
 
 #For Repeat 1
 
+PDFpath1 <- "~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/LICOR 6800 files/ACiRep1.pdf"
+pdf(file=PDFpath1)
+
 Repeat1 <- subset(ACiData, ACiData$Repeat == 1)
 
 for (value in unique(Repeat1$Plot)){
@@ -57,7 +60,12 @@ for (value in unique(Repeat1$Plot)){
        main=paste("Plot of", value,"_ 1"), xlab="Ci", ylab="A")
 }
 
+dev.off()
+
 #For Repeat 2 
+
+PDFpath2 <- "~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/LICOR 6800 files/ACiRep2.pdf"
+pdf(file=PDFpath2)
 
 Repeat2 <- subset(ACiData, ACiData$Repeat == 2)
 
@@ -67,7 +75,12 @@ for (value in unique(Repeat1$Plot)){
        main=paste("Plot of", value, "_ 2"), xlab="Ci", ylab="A")
 }
 
+dev.off()
+
 #For Repeat 3
+
+PDFpath3 <- "~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/LICOR 6800 files/ACiRep3.pdf"
+pdf(file=PDFpath3)
 
 Repeat3 <- subset(ACiData, ACiData$Repeat == 3)
 
@@ -76,3 +89,5 @@ for (value in unique(Repeat1$Plot)){
   plot(subset$Ci, subset$A, col='Red', xlim=c(0,1000), ylim=c(-1,100), 
        main=paste("Plot of", value, "_ 3"), xlab="Ci", ylab="A")
 }
+
+dev.off()
