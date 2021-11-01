@@ -69,8 +69,8 @@ pdf(file=PDFpath2)
 
 Repeat2 <- subset(ACiData, ACiData$Repeat == 2)
 
-for (value in unique(Repeat1$Plot)){
-  subset <- subset(Repeat1, Repeat1$Plot == value)
+for (value in unique(Repeat2$Plot)){
+  subset <- subset(Repeat2, Repeat2$Plot == value)
   plot(subset$Ci, subset$A, col='Blue', xlim=c(0,1000), ylim=c(-1,100), 
        main=paste("Plot of", value, "_ 2"), xlab="Ci", ylab="A")
 }
@@ -84,8 +84,8 @@ pdf(file=PDFpath3)
 
 Repeat3 <- subset(ACiData, ACiData$Repeat == 3)
 
-for (value in unique(Repeat1$Plot)){
-  subset <- subset(Repeat1, Repeat1$Plot == value)
+for (value in unique(Repeat3$Plot)){
+  subset <- subset(Repeat3, Repeat3$Plot == value)
   plot(subset$Ci, subset$A, col='Red', xlim=c(0,1000), ylim=c(-1,100), 
        main=paste("Plot of", value, "_ 3"), xlab="Ci", ylab="A")
 }
