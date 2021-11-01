@@ -3,9 +3,13 @@
 library(readxl)
 library(ggplot2)
 
+#Set working directory
+
+setwd("~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign")
+
 #Get data
 
-SLA <- read_excel("~/OneDrive - University of Cambridge/MPhil/Data2021/SLA.xlsx")
+SLA <- read_excel("SLA Data/SLA.xlsx")
 SLA = data.frame(SLA)
 
 SLA$Rep <- as.factor(SLA$Rep)
@@ -39,8 +43,29 @@ SLADateGraph
 rep1 <- SLA[which(SLA$Rep=='1'),]
 rep2 <- SLA[which(SLA$Rep=='2'),]
 
-PosCorGraph <- ggplot(rep1, aes(x=SLA, y=rep2$SLA)) +geom_point()
+#Get means for each genotype for each rep 1 or 2
 
-PosCorGraph #Need to get means of each genotype for this to work --> ask John?
+rep1means <- length(vector())
+  
+for (value in unique(rep1$Name)){
+  subset <- subset(rep1, rep1$Name == value)
+  mean <- mean(subset$SLA, na.rm=TRUE)
+  rep1means <- append(rep1means, mean)
+}
 
+rep2means <- length(vector())
+
+for (value in unique(rep2$Name)){
+  subset <- subset(rep2, rep2$Name == value)
+  mean <- mean(subset$SLA, na.rm=TRUE)
+  rep2means <- append(rep2means, mean)
+}
+
+rep1means <- rep1means[-1]
+rep2means <- rep2means[-1]
+
+plot(x=rep1means, y=rep2means, main = paste("SLA rep 2 means vs SLA rep 1 means"), 
+     xlab = "Rep1 SLA means", ylab = "Rep2 SLA means", xlim = c(0,400), ylim = c(0,400))
+
+PosCorGraph
   
