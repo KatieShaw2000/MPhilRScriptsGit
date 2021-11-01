@@ -16,12 +16,12 @@ SLA$Rep <- as.factor(SLA$Rep)
 
 #Look at area
 
-AreaGraph <- ggplot(SLA, aes(x=SLA, y=Area)) + geom_point()
+AreaGraph <- ggplot(SLA, aes(x=SLA, y=Area)) + geom_point() + ggtitle("Leaf Area vs SLA")
 AreaGraph
 
 #Look at mass
 
-MassGraph <- ggplot(SLA, aes(x=SLA, y=Mass)) + geom_point()
+MassGraph <- ggplot(SLA, aes(x=SLA, y=Mass)) + geom_point() + ggtitle("Leaf mass vs SLA")
 MassGraph
 
 #Plot genotype-by-genotype basis with both replicates
@@ -65,7 +65,5 @@ rep1means <- rep1means[-1]
 rep2means <- rep2means[-1]
 
 plot(x=rep1means, y=rep2means, main = paste("SLA rep 2 means vs SLA rep 1 means"), 
-     xlab = "Rep1 SLA means", ylab = "Rep2 SLA means", xlim = c(0,400), ylim = c(0,400))
-
-PosCorGraph
+     xlab = "Rep1 SLA means", ylab = "Rep2 SLA means", xlim = c(100,350), ylim = c(100,350))
   
