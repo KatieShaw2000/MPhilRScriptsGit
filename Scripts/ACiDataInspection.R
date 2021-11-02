@@ -2,11 +2,9 @@
 
 library(readxl)
 library(ggplot2)
-install.packages("data.table")
 library(data.table)
-install.packages("tidyverse")
 library(tidyverse)
-install.packages("usethis")
+library(writexl)
 
 #Set working directory
 
@@ -22,7 +20,7 @@ dropped <- map(todrop, ~ (.x %>% select(-6, -10))) #removed appropriate columns
 
 tokeep <- initialLICOR.list[c(3,6,7,10,11,14,15,18,21,24,27,30,31,32,35,36)] #have 174 columns already
 
-LICOR.list <- append(dropped, tokeep) #now all have 174 columns -- order of data will be strange though probably
+LICOR.list <- append(dropped, tokeep) #now all have 174 columns 
 
 data <- lapply(LICOR.list, tail, -14) #remove the first 14 rows from each element in the list
 
@@ -44,6 +42,9 @@ names(ACiData)[11] <- 'Ca'
 names(ACiData)[12] <- 'Ci'
 
 ACiData <- ACiData[order(Plot, Repeat)] #Order dataframe by ascending plot and repeat 
+
+#Get into excel to look at a bit more 
+write_xlsx(ACiData,"~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/LICOR 6800 files/ACiData.xlsx")
 
 #Loop to plot all different plots 
 
