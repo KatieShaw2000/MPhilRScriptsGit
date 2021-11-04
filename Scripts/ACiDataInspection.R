@@ -1,16 +1,15 @@
-#Packages Needed
+#Packages Needed ----
 
 library(readxl)
 library(ggplot2)
 library(data.table)
 library(tidyverse)
-library(writexl)
 
-#Set working directory
+#Set working directory ---- 
 
 setwd("~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/LICOR 6800 files")
 
-#Load Data
+#Load Data ----
 
 file.list <- list.files(pattern='*.xlsx', recursive = TRUE)
 initialLICOR.list <- lapply(file.list, read_excel)
@@ -26,7 +25,7 @@ data <- lapply(LICOR.list, tail, -14) #remove the first 14 rows from each elemen
 
 ACiData <- rbindlist(data)
 
-#Change column names
+#Change column names ---- 
 
 names(ACiData)[1] <- 'Sys_obs'
 names(ACiData)[2] <- 'Sys_time'
@@ -41,14 +40,27 @@ names(ACiData)[10] <- 'A'
 names(ACiData)[11] <- 'Ca'
 names(ACiData)[12] <- 'Ci'
 
+#remove unlabelled rows 1989-2002 
+
+ACiData <- ACiData[-c(1989:2002),]
+
+#change row 1619 NA value to 1157_3 
+
+ACiData[1619,6] <- 1157
+ACiData[1619,7] <- 3
+
+#order dataframe
+
 ACiData <- ACiData[order(Plot, Repeat)] #Order dataframe by ascending plot and repeat 
 
-#Get into excel to look at a bit more 
-write_xlsx(ACiData,"~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/LICOR 6800 files/ACiData.xlsx")
+#Make sure the plot names and repeats are numerical data
 
-#Loop to plot all different plots 
+ACiData$Plot <- as.numeric(ACiData$Plot)
+ACiData$Repeat <- as.numeric(ACiData$Repeat)
 
-#For Repeat 1
+#Loop to plot all different plots ----
+
+#For Repeat 1 ----
 
 PDFpath1 <- "~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/LICOR 6800 files/ACiRep1.pdf"
 pdf(file=PDFpath1)
@@ -57,13 +69,13 @@ Repeat1 <- subset(ACiData, ACiData$Repeat == 1)
 
 for (value in unique(Repeat1$Plot)){
   subset <- subset(Repeat1, Repeat1$Plot == value)
-  plot(subset$Ci, subset$A, col='Black', xlim=c(0,1000), ylim=c(-1,100), 
+  plot(subset$Ci, subset$A, col='Black', xlim=c(0,1700), ylim=c(-1,80), 
        main=paste("Plot of", value,"_ 1"), xlab="Ci", ylab="A")
 }
 
 dev.off()
 
-#For Repeat 2 
+#For Repeat 2 ----
 
 PDFpath2 <- "~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/LICOR 6800 files/ACiRep2.pdf"
 pdf(file=PDFpath2)
@@ -72,13 +84,13 @@ Repeat2 <- subset(ACiData, ACiData$Repeat == 2)
 
 for (value in unique(Repeat2$Plot)){
   subset <- subset(Repeat2, Repeat2$Plot == value)
-  plot(subset$Ci, subset$A, col='Blue', xlim=c(0,1000), ylim=c(-1,100), 
+  plot(subset$Ci, subset$A, col='Blue', xlim=c(0,1700), ylim=c(-1,80), 
        main=paste("Plot of", value, "_ 2"), xlab="Ci", ylab="A")
 }
 
 dev.off()
 
-#For Repeat 3
+#For Repeat 3 ----
 
 PDFpath3 <- "~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/LICOR 6800 files/ACiRep3.pdf"
 pdf(file=PDFpath3)
@@ -87,7 +99,7 @@ Repeat3 <- subset(ACiData, ACiData$Repeat == 3)
 
 for (value in unique(Repeat3$Plot)){
   subset <- subset(Repeat3, Repeat3$Plot == value)
-  plot(subset$Ci, subset$A, col='Red', xlim=c(0,1000), ylim=c(-1,100), 
+  plot(subset$Ci, subset$A, col='Red', xlim=c(0,1700), ylim=c(-1,80), 
        main=paste("Plot of", value, "_ 3"), xlab="Ci", ylab="A")
 }
 

@@ -1,49 +1,50 @@
-#Packages needed
+#Packages needed ----
 
 library(readxl)
 library(ggplot2)
 
-#Set working directory
+#Set working directory ----
 
 setwd("~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign")
 
-#Get data
+#Get data ----
 
 SLA <- read_excel("SLA Data/SLA.xlsx")
 SLA = data.frame(SLA)
 
 SLA$Rep <- as.factor(SLA$Rep)
 
-#Look at area
+#Look at area ----
 
 AreaGraph <- ggplot(SLA, aes(x=SLA, y=Area)) + geom_point() + ggtitle("Leaf Area vs SLA")
 AreaGraph
 
-#Look at mass
+#Look at mass ----
 
 MassGraph <- ggplot(SLA, aes(x=SLA, y=Mass)) + geom_point() + ggtitle("Leaf mass vs SLA")
 MassGraph
 
-#Plot genotype-by-genotype basis with both replicates
+#Plot genotype-by-genotype basis with both replicates ----
 
 SLABasicGraph <- ggplot(SLA, aes(x=Name, y=SLA, color=Rep)) + geom_point(size=1) +
   ggtitle("SLA vs Genotype")
 
 SLABasicGraph
 
-#Plot SLA against heading date 
+#Plot SLA against heading date ----
 
 SLADateGraph <- ggplot(SLA, aes(x=Heading_date, y=SLA, color=Rep)) + geom_point(size=1, shape=4) +
   ggtitle("SLA vs Heading Date")
 
 SLADateGraph
 
-#Plot SLA from first vs second rep means against each other --> should see positive correlation if same in different replicate
+#Plot SLA from first vs second rep means against each other ----
+#should see positive correlation if same in different replicate 
 
 rep1 <- SLA[which(SLA$Rep=='1'),]
 rep2 <- SLA[which(SLA$Rep=='2'),]
 
-#Get means for each genotype for each rep 1 or 2
+#Get means for each genotype for each rep 1 or 2 ----
 
 rep1means <- length(vector())
   
