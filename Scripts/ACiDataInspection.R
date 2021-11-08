@@ -42,7 +42,7 @@ names(ACiData)[12] <- 'Ci'
 
 #remove unlabelled rows 1989-2002 
 
-ACiData <- ACiData[-c(1989:2002),]
+#ACiData <- ACiData[-c(1989:2002),]
 
 #change row 1619 NA value to 1157_3 
 
