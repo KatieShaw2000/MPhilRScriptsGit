@@ -29,7 +29,7 @@ SLA_genotype_plot <- ggplot(data = SLA, aes(x = factor(0), y = SLA, colour = Plo
   xlab("") + 
   stat_summary(fun.y = mean, geom = "point", shape = 10, size = 2, color = "black") + 
   theme(legend.position = "none") + 
-  facet_wrap_paginate( ~ Name, ncol= 8, nrow = 5, page = 7)
+  facet_wrap_paginate( ~ Name, ncol= 8, nrow = 5, page = 8)
 
 SLA_genotype_plot
 

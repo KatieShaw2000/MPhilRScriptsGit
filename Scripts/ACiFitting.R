@@ -13,6 +13,7 @@ library(forcats)
 library(plyr)
 library(lme4)
 library(inti)
+library(writexl)
 
 #Set working directory 
 
@@ -41,7 +42,7 @@ write_xlsx(reduced_df,"~/OneDrive - University of Cambridge/MPhil/Phenotyping Ca
 #load as csv- John suggests this works 
 
 to_fit <- read.csv("ACiToFit.csv")
-fitting <- fitacis(to_fit, "PlotRepeat")
+fitting <- fitacis(to_fit, "PlotRepeat", fitmethod = "bilinear")
 
 #Plot the fitted curves 
 
@@ -55,60 +56,57 @@ fitting_output <- coef(fitting) #get dataframe with coefficients
 #merge coeff with reduced_df ----
 with_coef <- merge(reduced_df, fitting_output, by = "PlotRepeat")
 
-#Plotting!----
+#export the merged coeff data table so it's saved somewhere 
 
-with_coef$Rep <- as.factor(with_coef$Rep)
-mean_Jmax <- ddply(with_coef, .(Name, Rep), summarise, mean_Jmax = mean(Jmax, na.rm = TRUE)) 
-mean_Vcmax <- ddply(with_coef, .(Name, Rep), summarise, mean_Vcmax = mean(Vcmax, na.rm = TRUE)) 
+write_xlsx(with_coef, "~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/LICOR 6800 files/ACiCoef.xlsx")
 
-#Plot Jmax against name -- colour being rep
+#Want to plot the ACiDATA to make sure I removed the points I wanted to ----
 
-ggplot(data=with_coef, mapping = aes(x=Name, y=Jmax, colour=Rep)) +
-  geom_point()
+PDFpath1 <- "~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/UpdateRep1.pdf"
+pdf(file=PDFpath1)
 
-#Plot means of Jmax from each rep against each other
+Repeat1 <- subset(ACiDATA, ACiDATA$Repeat == 1)
 
-mean_Jmax_rep1 <- subset(mean_Jmax, Rep == "1")
-colnames(mean_Jmax_rep1) <- c("Name", "Rep", "mean_Jmax_rep1")
-mean_Jmax_rep1 <- subset(mean_Jmax_rep1, select = -c(Rep))
+for (value in unique(Repeat1$Plot)){
+  subset <- subset(Repeat1, Repeat1$Plot == value)
+  plot(subset$Ci, subset$A, col='Black', xlim=c(0,1700), ylim=c(-1,80), 
+       main=paste("Plot of", value,"_ 1"), xlab="Ci", ylab="A")
+}
 
-mean_Jmax_rep2 <- subset(mean_Jmax, Rep == "2")
-colnames(mean_Jmax_rep2) <- c("Name", "Rep", "mean_Jmax_rep2")
-mean_Jmax_rep2 <- subset(mean_Jmax_rep2, select = -c(Rep))
+dev.off()
 
-mean_Jmax <- merge(mean_Jmax_rep1, mean_Jmax_rep2, by = "Name")
 
-ggplot(data=mean_Jmax, mapping = aes(x=mean_Jmax_rep1, y =mean_Jmax_rep2))+
-  geom_point()+
-  scale_x_continuous(limits = c(100,250), breaks = seq(100,250,25)) + 
-  scale_y_continuous(limits = c(100,250), breaks = seq(100,250,25)) + 
-  ylab("Jmax (Rep 1)") + 
-  xlab("Jmax (Rep 2)") + 
-  geom_smooth(method = "lm")+
-  ggtitle("Rep 1 Jmax vs Rep 2 Jmax")
+PDFpath2 <- "~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/UpdateRep2.pdf"
+pdf(file=PDFpath2)
 
-#Plot Vcmax against name -- colour being rep
+Repeat2 <- subset(ACiDATA, ACiDATA$Repeat == 2)
 
-ggplot(data=with_coef, mapping = aes(x=Name, y=Vcmax, colour=Rep)) +
-  geom_point()
+for (value in unique(Repeat2$Plot)){
+  subset <- subset(Repeat2, Repeat2$Plot == value)
+  plot(subset$Ci, subset$A, col='Blue', xlim=c(0,1700), ylim=c(-1,80), 
+       main=paste("Plot of", value, "_ 2"), xlab="Ci", ylab="A")
+}
 
-#Plot means of Vcmax from each rep against each other 
+dev.off()
 
-mean_Vcmax_rep1 <- subset(mean_Vcmax, Rep == "1")
-colnames(mean_Vcmax_rep1) <- c("Name", "Rep", "mean_Vcmax_rep1")
-mean_Vcmax_rep1 <- subset(mean_Vcmax_rep1, select = -c(Rep))
+#For Repeat 3 
 
-mean_Vcmax_rep2 <- subset(mean_Vcmax, Rep == "2")
-colnames(mean_Vcmax_rep2) <- c("Name", "Rep", "mean_Vcmax_rep2")
-mean_Vcmax_rep2 <- subset(mean_Vcmax_rep2, select = -c(Rep))
+PDFpath3 <- "~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/UpdateRep3.pdf"
+pdf(file=PDFpath3)
 
-mean_Vcmax <- merge(mean_Vcmax_rep1, mean_Vcmax_rep2, by = "Name")
+Repeat3 <- subset(ACiDATA, ACiDATA$Repeat == 3)
 
-ggplot(data=mean_Vcmax, mapping = aes(x=mean_Vcmax_rep1, y =mean_Vcmax_rep2))+
-  geom_point()+
-  scale_x_continuous(limits = c(60,130), breaks = seq(60,130,10)) + 
-  scale_y_continuous(limits = c(60,130), breaks = seq(60,130,10)) + 
-  ylab("Vcmax (Rep 1)") + 
-  xlab("Vcmax (Rep 2)") + 
-  geom_smooth(method = "lm")+
-  ggtitle("Rep 1 Vcmax vs Rep 2 Vcmax")
+for (value in unique(Repeat3$Plot)){
+  subset <- subset(Repeat3, Repeat3$Plot == value)
+  plot(subset$Ci, subset$A, col='Red', xlim=c(0,1700), ylim=c(-1,80), 
+       main=paste("Plot of", value, "_ 3"), xlab="Ci", ylab="A")
+}
+
+dev.off()
+
+
+
+
+
+
+
