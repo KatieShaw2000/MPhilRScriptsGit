@@ -10,6 +10,29 @@ library(gridExtra)
 library(tidyr)
 library(ggforce)
 
+#Trying a loop
+
+files <- list.files(pattern = "*.csv", recursive=TRUE)
+
+
+testmatrix <- matrix(c("Fv/Fm_L1","Fv/Fm_L2","Fv/Fm_L3","Fv/Fm_L4","Fv/Fm_L5","Fv/Fm_L6","Fv/Fm_L7","Fv/Fm_L8","Fv/Fm_L9","Fv/Fm_L10","Fv/Fm_L11",
+                       "Fv/Fm_Lss", "Fv/Fm_D1","Fv/Fm_D2","Fv/Fm_D3","Fv/Fm_D4","Fv/Fm_D5","Fv/Fm_D6","Fv/Fm_D7","Fv/Fm_D8",
+                       "NPQ_L1","NPQ_L2","NPQ_L3","NPQ_L4","NPQ_L5","NPQ_L6","NPQ_L7","NPQ_L8","NPQ_L9","NPQ_L10","NPQ_L11", 
+                       "NPQ_Lss", "NPQ_D1","NPQ_D2","NPQ_D3","NPQ_D4","NPQ_D5","NPQ_D6","NPQ_D7","NPQ_D8"), nrow=2)
+
+for (file in files) {
+  plate <- read.csv(file, skip=2)
+  plate <- t(plate)
+  plate <- data.frame(plate)
+  rownames(plate) <- NULL
+  colnames(plate) <- plate[1,]
+  plate <- plate[-1,]
+  plate <- reshape(plate, varying = testmatrix, v.names = c("Fv/Fm", "NPQ"), times = c(1:20), direction = "long")
+  plate <- plate[order(plate$Plot, plate$Repeat),]
+  plate <- plate[,-7]
+  rownames(plate) <- NULL
+}
+
 #jun 1 ----
 
 jun1_plate1 <- read.delim("June 1/Plate 1.txt", skip =2, fill = TRUE)
