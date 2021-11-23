@@ -9,8 +9,9 @@ library(ggplot2)
 library(gridExtra)
 library(tidyr)
 library(ggforce)
+library(tidyverse)
 
-#Trying a loop
+#Trying a loop ----
 
 files <- list.files(pattern = "*.csv", recursive=TRUE)
 
@@ -20,6 +21,8 @@ testmatrix <- matrix(c("Fv/Fm_L1","Fv/Fm_L2","Fv/Fm_L3","Fv/Fm_L4","Fv/Fm_L5","F
                        "NPQ_L1","NPQ_L2","NPQ_L3","NPQ_L4","NPQ_L5","NPQ_L6","NPQ_L7","NPQ_L8","NPQ_L9","NPQ_L10","NPQ_L11", 
                        "NPQ_Lss", "NPQ_D1","NPQ_D2","NPQ_D3","NPQ_D4","NPQ_D5","NPQ_D6","NPQ_D7","NPQ_D8"), nrow=2)
 
+plates <- c("Plot", "Repeat", "QY_max", "time", "Fv/Fm", "NPQ", "Filename")
+
 for (file in files) {
   plate <- read.csv(file, skip=2)
   plate <- t(plate)
@@ -27,15 +30,24 @@ for (file in files) {
   rownames(plate) <- NULL
   colnames(plate) <- plate[1,]
   plate <- plate[-1,]
+  plate <- select(plate,"Plot", "Repeat", "QY_max", 
+                  "Fv/Fm_L1","Fv/Fm_L2","Fv/Fm_L3","Fv/Fm_L4","Fv/Fm_L5","Fv/Fm_L6","Fv/Fm_L7","Fv/Fm_L8","Fv/Fm_L9","Fv/Fm_L10","Fv/Fm_L11",
+                  "Fv/Fm_Lss", "Fv/Fm_D1","Fv/Fm_D2","Fv/Fm_D3","Fv/Fm_D4","Fv/Fm_D5","Fv/Fm_D6","Fv/Fm_D7","Fv/Fm_D8",
+                  "NPQ_L1","NPQ_L2","NPQ_L3","NPQ_L4","NPQ_L5","NPQ_L6","NPQ_L7","NPQ_L8","NPQ_L9","NPQ_L10","NPQ_L11", 
+                  "NPQ_Lss", "NPQ_D1","NPQ_D2","NPQ_D3","NPQ_D4","NPQ_D5","NPQ_D6","NPQ_D7","NPQ_D8")
   plate <- reshape(plate, varying = testmatrix, v.names = c("Fv/Fm", "NPQ"), times = c(1:20), direction = "long")
   plate <- plate[order(plate$Plot, plate$Repeat),]
   plate <- plate[,-7]
   rownames(plate) <- NULL
+  plate$Filename <- rep(c(file), times=20)
+  plates <- rbind(plates, plate)
 }
+
+output <- plates[-1,]
 
 #jun 1 ----
 
-jun1_plate1 <- read.delim("June 1/Plate 1.txt", skip =2, fill = TRUE)
+jun1_plate1 <- read.csv("June 1/plate1_june1.csv", skip =2, fill = TRUE)
 jun1_plate1 <- t(jun1_plate1) #transpose 
 jun1_plate1 <- data.frame(jun1_plate1) #make dataframe
 rownames(jun1_plate1) <- NULL
@@ -153,17 +165,6 @@ ggplot(data=jun1, aes(time, NPQ, colour = Repeat))+
   ylim(0,5)+
   facet_wrap(~Plot)
 
-#jun 2 ----
-#jun 3 ----
-#jun 4 ----
-#jun 7
-#jun 8 ----
-#jun 9 ----
-#jun 10 ----
-#jun11 ----
-#jun 12 ----
-#may 25 ----
-#may 27 ----
 
 
 
