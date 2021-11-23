@@ -44,6 +44,34 @@ for (file in files) {
 }
 
 output <- plates[-1,]
+output <- output[order(output$Plot, output$Repeat),]
+
+output$QY_max <- as.numeric(output$QY_max)
+output$`Fv/Fm` <- as.numeric(output$`Fv/Fm`)
+output$NPQ <- as.numeric(output$NPQ)
+output$time <- as.numeric(output$time)
+output$Repeat <- as.factor(output$Repeat)
+
+time_post_light_on <- c(20,40,60,120,180,240,300,360,420,480,540,600,NA,NA,NA,NA,NA,NA,NA,NA)
+time_post_light_off <- c(NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,20,40,60,120,180,360,540,720)
+cumulative_time <- c(20,40,60,120,180,240,300,360,420,480,540,600,620,640,660,720,780,960,1140,1320)
+
+output$time_post_light_on <- rep(time_post_light_on, times=1548)
+output$time_post_light_off <- rep(time_post_light_off, times=1548)
+output$cumulative_time <- rep(cumulative_time, times=1548)
+
+output <- output[,-4]
+
+#visualise ----
+
+ggplot(data=output, aes(x=cumulative_time, y=NPQ, colour=Repeat)) +
+  geom_point()+
+  facet_wrap_paginate( ~ Plot, ncol= 10, nrow = 5, page = 1)
+
+ggplot(data=output, aes(x=cumulative_time, y=`Fv/Fm`, colour=Repeat)) +
+  geom_point()+
+  facet_wrap_paginate( ~ Plot, ncol= 10, nrow = 5, page = 1)
+
 
 #jun 1 ----
 
@@ -152,22 +180,3 @@ jun1$Repeat <- as.factor(jun1$Repeat)
 jun1$`Fv/Fm` <- as.numeric(jun1$`Fv/Fm`)
 jun1$NPQ <- as.numeric(jun1$NPQ)
 jun1$QY_max <- as.numeric(jun1$QY_max)
-
-#visualise
-
-ggplot(data=jun1, aes(time, `Fv/Fm`, colour = Repeat))+
-  geom_point()+
-  ylim(0,5)+
-  facet_wrap(~Plot)
-
-ggplot(data=jun1, aes(time, NPQ, colour = Repeat))+
-  geom_point()+
-  ylim(0,5)+
-  facet_wrap(~Plot)
-
-
-
-
-
-
-
