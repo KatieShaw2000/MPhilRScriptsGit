@@ -33,6 +33,9 @@ ggplot(data = dates, aes(x = factor(0), y = days_post_transplanting, colour = Pl
 #Plotting rep 1 against rep 2 ----
 
 summary(aov(dates$days_post_transplanting ~ Rep, dates)) #ANOVA
+
+t.test(days_post_transplanting~Rep, data=dates, alternative = "two.sided", var.equal =TRUE)
+
 dates$Rep <- as.factor(dates$Rep) #Make sure Rep is a factor 
 
 rep1 <- subset(dates, Rep == 1)
@@ -54,5 +57,5 @@ ggplot(test, aes(rep1, rep2))+
 ggplot(dates, aes(x=Rep, y=days_post_transplanting)) + 
   geom_boxplot(notch = TRUE, colour = "tomato3") + 
   geom_jitter(position=position_jitter(0.2), color = "darkolivegreen3") + 
-  ylab("Time taken to heading")
-  theme_classic()
+  ylab("Time taken to heading")+
+  theme(text=element_text(size=15)) 

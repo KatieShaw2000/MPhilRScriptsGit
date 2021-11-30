@@ -37,9 +37,17 @@ SLA_genotype_plot
 
 mean_SLA <- ddply(SLA, .(Name, Rep), summarise, mean_SLA = mean(SLA, na.rm = TRUE)) 
 
-summary(aov(mean_SLA ~ Rep, mean_SLA)) #ANOVA
+summary(aov(mean_SLA ~ Rep, mean_SLA)) #ANOVA -- no shouldn't be doing an ANOVA!!!!!! Paired t-test I think 
+
+#Stats test to see if the same genotype in rep 2 is lower than rep 1
 
 mean_SLA$Rep <- as.factor(mean_SLA$Rep) #Make sure Rep is a factor 
+t.test(mean_SLA ~ Rep, data = mean_SLA, alternative = "two.sided", var.equal = TRUE)
+
+rep1_meanSLA <- subset(mean_SLA, Rep == "1")
+rep2_meanSLA <- subset(mean_SLA, Rep == "2")
+
+t.test(rep1_meanSLA$mean_SLA, rep2_meanSLA$mean_SLA, alternative="two.sided", paired=TRUE)
 
 #SLA means boxplot ----
 
@@ -47,7 +55,7 @@ boxplot_raw_means <- ggplot(mean_SLA, aes(x=Rep, y=mean_SLA)) +
   geom_boxplot(notch = TRUE, colour = "tomato3") + 
   geom_jitter(position=position_jitter(0.2), color = "darkolivegreen3") + 
   scale_y_continuous(limits = c(100,375), breaks = seq(100,375,25)) + 
-  theme_classic()
+  theme(text=element_text(size=15))
 
 boxplot_raw_means
 
@@ -72,7 +80,7 @@ scatter_raw_means <- ggplot(mean_SLA_II, aes(x = mean_SLA_rep1, y = mean_SLA_rep
   ylab("SLA (Rep 2)") + 
   xlab("SLA (Rep 1)") + 
   geom_smooth(method = "lm", colour = "tomato3", fill = "tomato") + 
-  theme_classic() 
+  theme(text=element_text(size=15)) 
 
 scatter_raw_means
 
@@ -97,7 +105,7 @@ mean_area$Rep <- as.factor(mean_area$Rep) #Make sure Rep is a factor
 ggplot(mean_area, aes(x=Rep, y=mean_area)) + 
   geom_boxplot(notch = TRUE, colour = "tomato3") + 
   geom_jitter(position=position_jitter(0.2), color = "darkolivegreen3") + 
-  theme_classic()
+  theme(text=element_text(size=15)) 
 
 #Plot area means of rep1 vs rep2 ----
 
@@ -137,7 +145,7 @@ mean_mass$Rep <- as.factor(mean_mass$Rep) #Make sure Rep is a factor
 ggplot(mean_mass, aes(x=Rep, y=mean_mass)) + 
   geom_boxplot(notch = TRUE, colour = "tomato3") + 
   geom_jitter(position=position_jitter(0.2), color = "darkolivegreen3") + 
-  theme_classic()
+  theme(text=element_text(size=15)) 
 
 #Plot mass means of rep1 vs rep2 ----
 

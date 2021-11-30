@@ -41,7 +41,7 @@ write_xlsx(reduced_df,"~/OneDrive - University of Cambridge/MPhil/Phenotyping Ca
 
 #load as csv- John suggests this works 
 
-to_fit <- read.csv("ACiToFit.csv")
+to_fit <- read.csv("reduced_df.csv")
 fitting <- fitacis(to_fit, "PlotRepeat", fitmethod = "bilinear")
 
 #Plot the fitted curves 

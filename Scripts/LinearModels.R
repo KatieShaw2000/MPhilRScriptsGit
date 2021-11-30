@@ -16,9 +16,9 @@ SLA <- select(SLA, -ToDrop)
 
 dates <- read_excel("~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/HeadingSamplingDates.xlsx")
 
-dates <- select(dates, Name, Rep, Column, "Heading-Sampling", "Transplanting-Heading", Sampling)
+dates <- select(dates, Name, Rep, Column, Block, "Heading-Sampling", "Transplanting-Heading", Sampling)
 
-colnames(dates) <- c("Name", "Rep", "Column", "heading_to_sampling",
+colnames(dates) <- c("Name", "Rep", "Column", "Block", "heading_to_sampling",
                      "transplanting_to_heading", "sampling_date")
 
 mergeSLA <- merge(SLA, dates, by = c("Name", "Rep"))
@@ -32,6 +32,8 @@ var_SLA <- as.data.frame(VarCorr(SLA_model, comp = "vcov"))
 head(var_SLA)
 
 h_SLA <- var_SLA[1,4]/sum(var_SLA[,4])
+
+ggplot(var_SLA, aes(x=grp, y=vcov)) +geom_bar(stat="identity")
 
 #Calculating BLUPs
 
@@ -48,7 +50,8 @@ ggplot(SLA_blups_genotypes, aes(x=adjusted_SLA)) +
   geom_density()+ 
   scale_x_continuous(limits=c(190,270), breaks = seq(190,270,10))+
   xlab("SLA")+
-  ylab("Density")
+  ylab("Density")+
+  theme(text=element_text(size=15)) 
 
 #Boxplot
 
@@ -73,6 +76,8 @@ var_hd <- as.data.frame(VarCorr(hd_model, comp = "vcov"))
 head(var_hd)
 
 h_hd <- var_hd[1,4]/sum(var_hd[,4])
+
+ggplot(var_hd, aes(x=grp, y=vcov)) +geom_bar(stat="identity")
 
 #Calculating BLUPs
 
@@ -99,10 +104,9 @@ write.csv(hd_blups_genotypes,"~/OneDrive - University of Cambridge/MPhil/GitLink
 
 #Load data 
 
-LICOR_ACI <- read_excel("OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/ACiCoefWithLICORs.xlsx")
+LICOR_ACI <- read_excel("ACiCoefWithLICORs.xlsx")
 LICOR_ACI <- LICOR_ACI[1:243,]
 names(LICOR_ACI)[9] <- "LICOR_time"
-LICOR_ACI$LICOR_time <- hour(LICOR_ACI$LICOR_time) #get time in hour 
 
 #need to get column into data frame
 
@@ -111,7 +115,7 @@ column_plot_rep <- select(mergeSLA, Plot, Rep, Repeat, Column)
 LICOR_ACI <- merge(LICOR_ACI, column_plot_rep, by = c("Plot", "Rep", "Repeat"))
 
 Jmax_model <-  lmer(data=LICOR_ACI, Jmax ~ (1|Name) + (1|Rep) + (1|Rep:Column) + (1|LICOR_user) + 
-                      (1|LICOR_time) + (1|LICOR_date) + (1|LICOR_ID))
+                      (1|LICOR_start_hour) + (1|LICOR_date) + (1|LICOR_ID))
 
 summary(Jmax_model)
 
@@ -119,6 +123,8 @@ var_Jmax <- as.data.frame(VarCorr(Jmax_model, comp = "vcov"))
 head(var_Jmax)
 
 h_Jmax <- var_Jmax[1,4]/sum(var_Jmax[,4])
+
+ggplot(var_Jmax, aes(x=grp, y=vcov)) +geom_bar(stat="identity")
 
 #sort out BLUPS 
 
@@ -143,7 +149,7 @@ write.csv(Jmax_blups_genotypes,"~/OneDrive - University of Cambridge/MPhil/GitLi
 #Model for Vcmax ----
 
 Vcmax_model <-  lmer(data=LICOR_ACI, Vcmax ~ (1|Name) + (1|Rep) + (1|Rep:Column) + (1|LICOR_user) + 
-                      (1|LICOR_time) + (1|LICOR_date) + (1|LICOR_ID))
+                      (1|LICOR_start_hour) + (1|LICOR_date) + (1|LICOR_ID))
 
 summary(Vcmax_model)
 
@@ -151,6 +157,7 @@ var_Vcmax <- as.data.frame(VarCorr(Vcmax_model, comp = "vcov"))
 head(var_Vcmax)
 
 h_Vcmax <- var_Vcmax[1,4]/sum(var_Vcmax[,4])
+ggplot(var_Vcmax, aes(x=grp, y=vcov)) +geom_bar(stat="identity")
 
 #sort out BLUPS
 

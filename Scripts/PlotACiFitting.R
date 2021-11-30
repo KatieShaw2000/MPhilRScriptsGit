@@ -18,10 +18,10 @@ setwd("~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/LICOR 680
 #Get data 
 
 aci_coef <- read_excel("ACiCoef.xlsx")
-red_aci_coef <- select(aci_coef,Name,Repeat, Rep, Jmax, Vcmax)
+red_aci_coef <- select(aci_coef,Name,Plot,Repeat, Rep, Jmax, Vcmax)
 red_aci_coef <- red_aci_coef %>% distinct() #remove repeated values
 
-write_xlsx(red_aci_coef, "~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/ACiCoefWithLICORs.xlsx")
+write_xlsx(red_aci_coef, "~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/LICOR 6800 files/red_aci_coef.xlsx")
 
 #Plotting!----
 
