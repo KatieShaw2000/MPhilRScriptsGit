@@ -5,8 +5,12 @@ library(gridExtra)
 library(tidyr)
 library(ggforce)
 library(data.table)
+library(forcats)
+library(plyr)
+library(lme4)
+library(inti)
 
-#Set working directory ---- 
+#Set working directory 
 
 setwd("~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/Cleaned 6400 files")
 file.list <- list.files(pattern='*.xlsx', recursive = TRUE)
@@ -50,7 +54,7 @@ ggplot(data = ACi_6400, aes(x = Elapsed_time, y = Photo, colour = Repeat)) +
   ylim(0, 50) +
   geom_point(size=0.5)+
   theme(legend.position = "none") + 
-  facet_wrap_paginate( ~ Plot, ncol= 5, nrow = 5, page = 1)
+  facet_wrap_paginate( ~ Plot, ncol= 5, nrow = 5, page = 3)
 
 
 #Gs with light drop 
@@ -63,3 +67,28 @@ ggplot(data = ACi_6400, aes(x = Elapsed_time, y = Cond, colour = Repeat)) +
   geom_point(size=0.5)+
   theme(legend.position = "none") + 
   facet_wrap_paginate( ~ Plot, ncol= 8, nrow = 5, page = 1)
+
+# get averages of last 10 points before end of light phase ----
+
+before_drop <- filter(ACi_6400, Light == "1800")
+after_drop <- filter(ACi_6400, Light == "200")
+
+before_drop <- filter(before_drop, Elapsed_time >= 372) #get last minute
+after_drop <- filter(after_drop, Elapsed_time >= 1020) #get last minute
+                       
+mean_Asat <- ddply(before_drop, .(Plot, Repeat), summarise, mean_Asat = mean(Photo, na.rm = TRUE), 
+                   sd_Asat = sd(Photo, na.rm=TRUE), se_Asat = sd_Asat/sqrt(10)) 
+
+mean_gs_Asat <- ddply(before_drop, .(Plot, Repeat), summarise, mean_gs_Asat = mean(Cond, na.rm = TRUE),
+                      sd_gs_Asat = sd(Cond, na.rm=TRUE), se_gs_Asat = sd_gs_Asat/sqrt(10)) 
+ 
+mean_Alow <- ddply(before_drop, .(Plot, Repeat), summarise, mean_Alow = mean(Photo, na.rm = TRUE), 
+                   sd_Alow = sd(Photo, na.rm=TRUE), se_Alow = sd_Alow/sqrt(10)) 
+
+mean_gs_Alow <- ddply(before_drop, .(Plot, Repeat), summarise, mean_gs_Alow = mean(Cond, na.rm = TRUE),
+                      sd_gs_Alow = sd(Cond, na.rm=TRUE), se_gs_Asat = sd_gs_Alow/sqrt(10)) 
+
+ggplot(data=mean_Asat, aes(x=Plot, y=mean_Asat)) + geom_point()
+ggplot(data=mean_gs_Asat, aes(x=Plot, y=mean_gs_Asat)) + geom_point()
+ggplot(data=mean_Alow, aes(x=Plot, y=mean_Alow)) + geom_point()
+ggplot(data=mean_gs_Alow, aes(x=Plot, y=mean_gs_Alow)) + geom_point()
