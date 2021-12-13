@@ -179,3 +179,54 @@ ggplot(Vcmax_blups_genotypes, aes(x=adjusted_Vcmax)) +
 
 write.csv(Vcmax_blups_genotypes,"~/OneDrive - University of Cambridge/MPhil/GitLink/ExportedData/Vcmax_blups.csv", row.names = F)
 
+
+
+#Model for Asat ----
+
+Asat <- read_excel("~/OneDrive - University of Cambridge/MPhil/GitLink/ExportedData/6400data.xlsx")
+
+Asat_model <- lmer(data=Asat, mean_Asat ~ (1|Name) + (1|Rep) + (1|Column:Rep) + (1|Start_Hour) + (1|CAP) + (1|Date))
+summary(Asat_model)
+
+var_Asat <- as.data.frame(VarCorr(Asat_model, comp = "vcov"))
+head(var_Asat)
+
+h_Asat <- var_Asat[1,4]/sum(var_Asat[,4])
+
+ggplot(var_Asat, aes(x=grp, y=vcov)) +geom_bar(stat="identity")
+
+#Model for Alow ----
+
+Alow_model <- lmer(data=Asat, mean_Alow ~ (1|Name) + (1|Rep) + (1|Column:Rep) + (1|Start_Hour) + (1|CAP) + (1|Date))
+summary(Alow_model)
+
+var_Alow <- as.data.frame(VarCorr(Alow_model, comp = "vcov"))
+head(var_Alow)
+
+h_Alow <- var_Alow[1,4]/sum(var_Alow[,4])
+
+ggplot(var_Alow, aes(x=grp, y=vcov)) +geom_bar(stat="identity")
+
+#Model for gs_Asat ----
+
+gs_Asat_model <- lmer(data=Asat, mean_gs_Asat ~ (1|Name) + (1|Rep) + (1|Column:Rep) + (1|Start_Hour) + (1|CAP) + (1|Date))
+summary(gs_Asat_model)
+
+var_gs_Asat<- as.data.frame(VarCorr(gs_Asat_model, comp = "vcov"))
+head(var_gs_Asat)
+
+h_gs_Asat <- var_gs_Asat[1,4]/sum(var_gs_Asat[,4])
+
+ggplot(var_gs_Asat, aes(x=grp, y=vcov)) +geom_bar(stat="identity")
+
+#Model for gs_Alow ----
+
+gs_Alow_model <- lmer(data=Asat, mean_gs_Alow ~ (1|Name) + (1|Rep) + (1|Column:Rep) + (1|Start_Hour) + (1|CAP) + (1|Date))
+summary(gs_Alow_model)
+
+var_gs_Alow<- as.data.frame(VarCorr(gs_Alow_model, comp = "vcov"))
+head(var_gs_Alow)
+
+h_gs_Alow <- var_gs_Alow[1,4]/sum(var_gs_Alow[,4])
+
+ggplot(var_gs_Alow, aes(x=grp, y=vcov)) +geom_bar(stat="identity")

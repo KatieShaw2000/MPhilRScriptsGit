@@ -38,7 +38,7 @@ NPQdata$plot_id <- paste(NPQdata$Plot, NPQdata$Repeat)
 # y <- predict(induction_model, list(cumulative_time=x))
 # points(x,y, type="l")
 
-#make function to use on all data for induction ----
+#make function to use on all data for induction NPQ----
 
 induction_data <- filter(NPQdata, cumulative_time <= 600)
 
@@ -105,7 +105,7 @@ ggplot(all_induction_fits, aes(x=plot, y=b_confint)) + geom_point()
 # y <- predict(relaxation_model, list(time_post_light_off=x))
 # points(x,y, type="l")
 
-#make function to use on all data ----
+#make function to use on all data for relaxation NPQ----
 
 relaxation_data <- filter(NPQdata, cumulative_time >= 600)
 
@@ -149,7 +149,7 @@ all_relaxation_fits <- rbindlist(all_relaxation_fits)
 # 
 # dev.off()
 
-#initial slope ----
+#initial slope NPQ----
 
 initial_data <- filter(NPQdata, cumulative_time <= 40)
 initial_data <- select(initial_data, plot_id,Plot,Repeat, NPQ_values, cumulative_time)
@@ -171,21 +171,66 @@ initial_slope_fits <- rbindlist(initial_slope_fits)
 initial_data <- filter(NPQdata, cumulative_time == 40)
 initial_data <- select(initial_data, plot_id, Plot, Repeat)
 
-#maximum amplitude ----
+#maximum amplitude NPQ----
 
 max_amp <- filter(NPQdata, NPQ_names=="NPQ_Lss")
 max_amp <- select(max_amp, plot_id, NPQ_values)
 names(max_amp)[2] <- "max_amp"
 
-#end point ----
+#end point NPQ ----
 
 end_point <- filter(NPQdata, NPQ_names == "NPQ_D8")
-end_point <- select(end_point, plot_id, NPQ_values)
+end_point <- select(end_point, plot_id, NPQ_values, FvFm_values)
 names(end_point)[2] <- "end_NPQ"
+names(end_point)[3] <- "end_FvFm"
+
+# phi PSII in the dark parameters----
+
+names(NPQdata)[5] <- "FvFm_values"
+# 
+relaxation_data <- filter(NPQdata, cumulative_time >= 600)
+# 
+# test <- relaxation_data[1:9,]
+# 
+# PSII_model <- nlsLM(FvFm_values ~ f*(1-exp(-g*time_post_light_off)) + h,data=test, start = list(f=0.25,g=0.002,h=0.6))
+# f_fit <- PSII_model$m$getAllPars()[1]
+# g_fit <- PSII_model$m$getAllPars()[2]
+# h_fit <- PSII_model$m$getAllPars()[3]
+# 
+# plot(test$time_post_light_off, test$FvFm_values)
+# x <- seq(0,720,by=5)
+# y <- predict(PSII_model, list(time_post_light_off=x))
+# points(x,y, type="l")
+
+#uses relaxation_data
+
+PSII_dark_fitting <- function(dataset,plot,f=0.25,g=0.002,h=0.6){
+  
+  subset <- subset(dataset, plot_id == plot) #subsets for each unique plot/repeat
+  PSII_model <- nlsLM(FvFm_values ~ f*(1-exp(-g*time_post_light_off)) + h,data=subset, 
+                           start = list(f=f,g=g,h=h))
+  f_fit <- PSII_model$m$getAllPars()[1]
+  g_fit <- PSII_model$m$getAllPars()[2]
+  h_fit <- PSII_model$m$getAllPars()[3]
+
+  PSII_fitting <- data.frame(plot = plot,
+                             f_fit = f_fit,
+                             g_fit = g_fit,
+                             h_fit = h_fit)
+  
+}
+
+PSII_plot_ids <-as.character(unique(relaxation_data$plot_id))
+names(PSII_plot_ids) <- PSII_plot_ids
+
+all_PSII_fits <- lapply(PSII_plot_ids, function(x) PSII_dark_fitting(relaxation_data,x))
+all_PSII_fits <- rbindlist(all_PSII_fits)
+
 
 #get all parameters into one dataframe
 
 NPQ_parms <- merge(all_induction_fits, all_relaxation_fits,by="plot")
+NPQ_parms <- merge(NPQ_parms, all_PSII_fits, by = "plot")
 NPQ_parms <- merge(NPQ_parms, initial_slope_fits, by = "plot")
 names(NPQ_parms)[1] <- "plot_id"
 NPQ_parms <- merge(NPQ_parms, max_amp, by="plot_id")
@@ -214,3 +259,12 @@ ggplot(NPQ_parms, aes(x=b_fit, y=gradient)) + geom_point() # should be fairly po
 
 NPQ_parms <- merge(initial_data, NPQ_parms, by="plot_id")
 NPQ_parms <- select(NPQ_parms, -c(a_confint, b_confint, plot_id))
+
+#add in genotype to dataframe ----
+
+genotype_data <- read_excel("~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/FieldDesign.xlsx")
+names(genotype_data)[1] <- "Plot"
+
+NPQ_parms <- merge(NPQ_parms, genotype_data, by = "Plot")
+
+write_xlsx(NPQ_parms, "~/OneDrive - University of Cambridge/MPhil/GitLink/ExportedData/NPQparms.xlsx")

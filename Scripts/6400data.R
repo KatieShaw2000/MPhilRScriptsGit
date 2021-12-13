@@ -9,6 +9,8 @@ library(forcats)
 library(plyr)
 library(lme4)
 library(inti)
+library(writexl)
+library(tidyverse)
 
 #Set working directory 
 
@@ -82,13 +84,43 @@ mean_Asat <- ddply(before_drop, .(Plot, Repeat), summarise, mean_Asat = mean(Pho
 mean_gs_Asat <- ddply(before_drop, .(Plot, Repeat), summarise, mean_gs_Asat = mean(Cond, na.rm = TRUE),
                       sd_gs_Asat = sd(Cond, na.rm=TRUE), se_gs_Asat = sd_gs_Asat/sqrt(10)) 
  
-mean_Alow <- ddply(before_drop, .(Plot, Repeat), summarise, mean_Alow = mean(Photo, na.rm = TRUE), 
+mean_Alow <- ddply(after_drop, .(Plot, Repeat), summarise, mean_Alow = mean(Photo, na.rm = TRUE), 
                    sd_Alow = sd(Photo, na.rm=TRUE), se_Alow = sd_Alow/sqrt(10)) 
 
-mean_gs_Alow <- ddply(before_drop, .(Plot, Repeat), summarise, mean_gs_Alow = mean(Cond, na.rm = TRUE),
-                      sd_gs_Alow = sd(Cond, na.rm=TRUE), se_gs_Asat = sd_gs_Alow/sqrt(10)) 
+mean_gs_Alow <- ddply(after_drop, .(Plot, Repeat), summarise, mean_gs_Alow = mean(Cond, na.rm = TRUE),
+                      sd_gs_Alow = sd(Cond, na.rm=TRUE), se_gs_Alow = sd_gs_Alow/sqrt(10)) 
 
 ggplot(data=mean_Asat, aes(x=Plot, y=mean_Asat)) + geom_point()
 ggplot(data=mean_gs_Asat, aes(x=Plot, y=mean_gs_Asat)) + geom_point()
 ggplot(data=mean_Alow, aes(x=Plot, y=mean_Alow)) + geom_point()
 ggplot(data=mean_gs_Alow, aes(x=Plot, y=mean_gs_Alow)) + geom_point()
+
+ggplot(data=mean_Asat, aes(x=se_Asat)) + geom_density() + geom_vline(aes(xintercept=0.4)) #suggest 0.4 cutoff 
+ggplot(data=mean_Alow, aes(x=se_Alow)) + geom_density() + xlim(0,3) #suggest 0.4 cutoff again
+
+ggplot(data=mean_gs_Asat, aes(x=se_gs_Asat)) + geom_density() #suggest 0.005 cutoff
+ggplot(data=mean_gs_Alow, aes(x=se_gs_Alow)) + geom_density() +xlim(0,0.005) #suggest 0.005 cutoff
+
+#make a big dataframe and then cut it down based on standard errors ----
+
+cleaned_6400_data <- merge(mean_Alow, mean_Asat, by = c("Plot", "Repeat"))
+cleaned_6400_data <- merge(cleaned_6400_data, mean_gs_Alow, by = c("Plot", "Repeat"))
+cleaned_6400_data <- merge(cleaned_6400_data, mean_gs_Asat, by = c("Plot", "Repeat"))
+
+cleaned_6400_data <- filter(cleaned_6400_data, se_Asat <= 0.4, se_Alow <= 0.4, se_gs_Asat <= 0.005, se_gs_Alow <= 0.005)
+
+cleaned_6400_data <- select(cleaned_6400_data, "Plot", "Repeat", "mean_Asat", "mean_Alow", "mean_gs_Asat", "mean_gs_Alow")
+
+#get genotype and other factors in ----
+
+fielddesign <- read_xlsx("~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/FieldDesign.xlsx")
+names(fielddesign)[1] <- "Plot"
+
+other_info <- select(ACi_6400, "Date", "Start_Hour", "CAP", "Plot", "Repeat")
+other_info <- unique(other_info) #remove duplicates
+
+cleaned_6400_data <- merge(fielddesign, cleaned_6400_data, by = "Plot")
+cleaned_6400_data <- merge(cleaned_6400_data, other_info, by = c("Plot", "Repeat"))
+
+#export this so i can use in another script 
+write_xlsx(cleaned_6400_data,"~/OneDrive - University of Cambridge/MPhil/GitLink/ExportedData/6400data.xlsx")
