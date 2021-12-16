@@ -39,7 +39,7 @@ reduced_df$Tleaf <- as.numeric(reduced_df$Tleaf)
 
 write_xlsx(reduced_df,"~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/LICOR 6800 files/reduced_df.xlsx")
 
-#load as csv- John suggests this works 
+#load as csv- needs to be read as csv to work for some reason
 
 to_fit <- read.csv("reduced_df.csv")
 fitting <- fitacis(to_fit, "PlotRepeat", fitmethod = "bilinear")
