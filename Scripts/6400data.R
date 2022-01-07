@@ -49,6 +49,8 @@ ggplot(data = without_drop, aes(x = Elapsed_time, y = Cond, colour = Repeat)) +
 
 #A with light drop
 
+ACi_6400$Repeat <- as.factor(ACi_6400$Repeat)
+
 ggplot(data = ACi_6400, aes(x = Elapsed_time, y = Photo, colour = Repeat)) +
   xlab("Elapsed Time") + 
   ylab("A")+
@@ -56,7 +58,7 @@ ggplot(data = ACi_6400, aes(x = Elapsed_time, y = Photo, colour = Repeat)) +
   ylim(0, 50) +
   geom_point(size=0.5)+
   theme(legend.position = "none") + 
-  facet_wrap_paginate( ~ Plot, ncol= 5, nrow = 5, page = 3)
+  facet_wrap_paginate( ~ Plot, ncol= 5, nrow = 5, page = 1)
 
 
 #Gs with light drop 

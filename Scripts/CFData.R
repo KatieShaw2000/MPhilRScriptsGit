@@ -88,7 +88,7 @@ filtered_output <- filter(filtered_output, Plot != "unknown") #remove unknown/un
 
 ggplot(data=filtered_output, aes(x=cumulative_time, y=NPQ_values, colour=Repeat)) +
   geom_point()+
-  facet_wrap_paginate( ~ Plot, ncol= 10, nrow = 8, page = 2)
+  facet_wrap_paginate( ~ Plot, ncol= 5, nrow = 5, page = 1)
 
 #export the filtered output to load into other script to do some fitting 
 

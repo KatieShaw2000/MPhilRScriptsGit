@@ -180,7 +180,7 @@ names(max_amp)[2] <- "max_amp"
 #end point NPQ ----
 
 end_point <- filter(NPQdata, NPQ_names == "NPQ_D8")
-end_point <- select(end_point, plot_id, NPQ_values, FvFm_values)
+end_point <- select(end_point, plot_id, NPQ_values, 'Fv/Fm_values')
 names(end_point)[2] <- "end_NPQ"
 names(end_point)[3] <- "end_FvFm"
 
@@ -240,11 +240,11 @@ NPQ_parms <- merge(NPQ_parms, end_point, by="plot_id")
 
 ggplot(NPQ_parms, aes(x=plot_id, y=a_confint)) + geom_point() 
 ggplot(NPQ_parms, aes(x=factor(0), y=a_confint)) + geom_boxplot()
-ggplot(NPQ_parms, aes(x=a_confint)) + geom_density() + geom_vline(aes(xintercept=2)) #suggest the cut off is 2 for a! 
+ggplot(NPQ_parms, aes(x=a_confint)) + geom_density() #geom_vline(aes(xintercept=2)) #suggest the cut off is 2 for a! 
 
 ggplot(NPQ_parms, aes(x=plot_id, y=b_confint)) + geom_point() 
 ggplot(NPQ_parms, aes(x=factor(0), y=b_confint)) + geom_boxplot() # suggest cut off is 0.01 for b!
-ggplot(NPQ_parms, aes(x=b_confint)) + geom_density() + geom_vline(aes(xintercept=0.01)) #suggest the cut off is 0.01 for b!
+ggplot(NPQ_parms, aes(x=b_confint)) + geom_density() #geom_vline(aes(xintercept=0.01)) #suggest the cut off is 0.01 for b!
 
 NPQ_parms <- filter(NPQ_parms, a_confint <= 2)
 NPQ_parms <- filter(NPQ_parms, b_confint <= 0.01)

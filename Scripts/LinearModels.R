@@ -16,12 +16,15 @@ SLA <- select(SLA, -ToDrop)
 
 dates <- read_excel("~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/HeadingSamplingDates.xlsx")
 
-dates <- select(dates, Name, Rep, Column, Block, "Heading-Sampling", "Transplanting-Heading", Sampling)
+dates <- select(dates, Name, Rep, Column, Block, Sampling, "Heading-Sampling", "Transplanting-Heading")
 
-colnames(dates) <- c("Name", "Rep", "Column", "Block", "heading_to_sampling",
-                     "transplanting_to_heading", "sampling_date")
+colnames(dates) <- c("Name", "Rep", "Column", "Block", "sampling_date", "heading_to_sampling",
+                     "transplanting_to_heading")
 
 mergeSLA <- merge(SLA, dates, by = c("Name", "Rep"))
+mergeSLA <- na.omit(mergeSLA)
+
+write_csv(mergeSLA, "~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/SLA Data/SLA.csv")
 
 #Model for SLA
 
