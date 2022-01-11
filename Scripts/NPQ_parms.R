@@ -21,6 +21,10 @@ library(data.table)
 NPQdata <- read_excel("ExportedData/NPQdata.xlsx")
 NPQdata$plot_id <- paste(NPQdata$Plot, NPQdata$Repeat)
 
+#names(NPQdata)[5] <- "values"
+
+#ggplot(NPQdata[1:21,], aes(x=cumulative_time, y=values)) + geom_point()
+
 #exponential fitting for induction test ----
 
 # induction_data <- filter(NPQdata, cumulative_time <= 600)
@@ -202,7 +206,7 @@ relaxation_data <- filter(NPQdata, cumulative_time >= 600)
 # y <- predict(PSII_model, list(time_post_light_off=x))
 # points(x,y, type="l")
 
-#uses relaxation_data
+#uses relaxation_data ----
 
 PSII_dark_fitting <- function(dataset,plot,f=0.25,g=0.002,h=0.6){
   
@@ -226,8 +230,12 @@ names(PSII_plot_ids) <- PSII_plot_ids
 all_PSII_fits <- lapply(PSII_plot_ids, function(x) PSII_dark_fitting(relaxation_data,x))
 all_PSII_fits <- rbindlist(all_PSII_fits)
 
+#filter based on confint for some induction parameters ----
 
-#get all parameters into one dataframe
+all_induction_fits <- filter(all_induction_fits, a_confint <=2)
+all_induction_fits <- filter(all_induction_fits, b_confint <= 0.01)
+
+#get all parameters into one dataframe ----
 
 NPQ_parms <- merge(all_induction_fits, all_relaxation_fits,by="plot")
 NPQ_parms <- merge(NPQ_parms, all_PSII_fits, by = "plot")

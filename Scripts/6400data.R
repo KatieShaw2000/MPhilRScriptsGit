@@ -19,6 +19,8 @@ file.list <- list.files(pattern='*.xlsx', recursive = TRUE)
 LICOR_6400.list <- lapply(file.list, read_excel)
 ACi_6400 <- rbindlist(LICOR_6400.list, fill = TRUE)
 
+ACi_6400$Repeat <- as.factor(ACi_6400$Repeat)
+
 #visualise ----
 
 without_drop <- filter(ACi_6400, Light == "1800")
@@ -49,16 +51,13 @@ ggplot(data = without_drop, aes(x = Elapsed_time, y = Cond, colour = Repeat)) +
 
 #A with light drop
 
-ACi_6400$Repeat <- as.factor(ACi_6400$Repeat)
-
 ggplot(data = ACi_6400, aes(x = Elapsed_time, y = Photo, colour = Repeat)) +
   xlab("Elapsed Time") + 
   ylab("A")+
   ggtitle("A with light drop")+
   ylim(0, 50) +
   geom_point(size=0.5)+
-  theme(legend.position = "none") + 
-  facet_wrap_paginate( ~ Plot, ncol= 5, nrow = 5, page = 1)
+  facet_wrap_paginate( ~ Plot, ncol= 8, nrow = 5, page = 1)
 
 
 #Gs with light drop 
@@ -69,8 +68,20 @@ ggplot(data = ACi_6400, aes(x = Elapsed_time, y = Cond, colour = Repeat)) +
   ggtitle("Gs with light drop")+
   ylim(0, 1) +
   geom_point(size=0.5)+
-  theme(legend.position = "none") + 
-  facet_wrap_paginate( ~ Plot, ncol= 8, nrow = 5, page = 1)
+  facet_wrap_paginate( ~ Plot, ncol= 8, nrow = 5, page = 16)
+
+#remove plots based on graphs that look like experiment was wrong ----
+
+#think the easiest way is to merge plotrepeat and then remove ones based on this column 
+
+ACi_6400$PlotRepeat <- paste(ACi_6400$Plot, ACi_6400$Repeat)
+
+to_remove <- c("1012 2", "1026 2", "1062 1", "1129 1", "1148 2", "1167 2", "1173 1", "1199 2",
+               "1216 1", "1222 2", "1254 1", "1263 1", "1318 3", "2015 3", "2028 1", "2031 3", 
+               "2036 3", "2045 1", "2051 3", "2082 3", "2100 2", "2103 3", "2122 2", "2135 1",
+               "2164 2", "2169 1", "2191 2", "2333 3", "2241 3", "2242 2", "2275 3")
+
+ACi_6400 <- ACi_6400[!ACi_6400$PlotRepeat %in% to_remove,]
 
 # get averages of last 10 points before end of light phase ----
 
@@ -97,11 +108,11 @@ ggplot(data=mean_gs_Asat, aes(x=Plot, y=mean_gs_Asat)) + geom_point()
 ggplot(data=mean_Alow, aes(x=Plot, y=mean_Alow)) + geom_point()
 ggplot(data=mean_gs_Alow, aes(x=Plot, y=mean_gs_Alow)) + geom_point()
 
-ggplot(data=mean_Asat, aes(x=se_Asat)) + geom_density() + geom_vline(aes(xintercept=0.4)) #suggest 0.4 cutoff 
-ggplot(data=mean_Alow, aes(x=se_Alow)) + geom_density() + xlim(0,3) #suggest 0.4 cutoff again
-
-ggplot(data=mean_gs_Asat, aes(x=se_gs_Asat)) + geom_density() #suggest 0.005 cutoff
-ggplot(data=mean_gs_Alow, aes(x=se_gs_Alow)) + geom_density() +xlim(0,0.005) #suggest 0.005 cutoff
+# ggplot(data=mean_Asat, aes(x=se_Asat)) + geom_density() + geom_vline(aes(xintercept=0.4)) #suggest 0.4 cutoff 
+# ggplot(data=mean_Alow, aes(x=se_Alow)) + geom_density() + xlim(0,3) #suggest 0.4 cutoff again
+# 
+# ggplot(data=mean_gs_Asat, aes(x=se_gs_Asat)) + geom_density() #suggest 0.005 cutoff
+# ggplot(data=mean_gs_Alow, aes(x=se_gs_Alow)) + geom_density() +xlim(0,0.005) #suggest 0.005 cutoff
 
 #make a big dataframe and then cut it down based on standard errors ----
 
