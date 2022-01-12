@@ -16,6 +16,10 @@ library(inti)
 
 SLA <- read_csv("SLA.csv")
 
+#boxplot of all SLA ----
+
+ggplot(SLA, aes(x=reorder(Name, SLA, FUN = median), y = SLA)) + geom_boxplot() + xlab("Genotype")
+
 #get averages of SLA for each plot ----
 
 SLA_means <- aggregate(SLA[,7], list(SLA$Name,SLA$Plot,SLA$Rep, SLA$Column, SLA$Block,
@@ -53,8 +57,8 @@ hr <- H2cal(data = SLA_means,
             trait = "SLA",
             gen.name = "Name",
             rep.n = 2,
-            fix.model = "0 + Name + (1|Rep) + (1|Sampling_date) + (1|Heading_date)",
-            ran.model = "(1|Name) + (1|Rep) + (1|Sampling_date) + (1|Heading_date)")
+            fix.model = "0 + Name + (1|Rep) + (1|Sampling_date) + (1|Heading_date) + (1|Block) + (1|Column)",
+            ran.model = "(1|Name) + (1|Rep) + (1|Sampling_date) + (1|Heading_date) + (1|Block) + (1|Column)")
 
 hr$tabsmr
 hr$blues
@@ -65,12 +69,12 @@ summary(hr$model)
 SLA_blues <- hr$blues
 names(SLA_blues)[2] <- "BLUEs"
 SLA_blups <- hr$blups
-names(SLA_blups)[2] <- "BLUPs"
+names(SLA_blups)[2] <- "SLA_blups"
 
 ggplot(SLA_blues, aes(x=BLUEs)) + geom_density(color="darkblue", fill="lightblue") + xlab("SLA: BLUEs") +
   ylab("Density") + theme_classic()
 
-ggplot(SLA_blups, aes(x=BLUPs)) + geom_density(color="darkblue", fill="lightblue") + xlab("SLA: BLUPs") +
+ggplot(SLA_blups, aes(x=SLA_blups)) + geom_density(color="darkblue", fill="lightblue") + xlab("SLA: BLUPs") +
   ylab("Density") + theme_classic()
 
 ggplot(SLA_blues, aes(x=reorder(Name, BLUEs), y = BLUEs)) + geom_point()
@@ -80,7 +84,7 @@ SLA_blues_blups <- SLA_blues_blups[,-3]
 
 ggplot(SLA_blues_blups, aes(x=BLUEs, y=BLUPs)) + geom_point()
 
-write.csv(SLA_blues_blups, "~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/blues blups/SLA.csv")
+write.csv(SLA_blups, "~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/BLUPs for PCA/SLA_blups.csv")
 
 #compare to BLUPs ----
 
