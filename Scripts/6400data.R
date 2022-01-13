@@ -21,9 +21,6 @@ ACi_6400 <- rbindlist(LICOR_6400.list, fill = TRUE)
 
 ACi_6400$Repeat <- as.factor(ACi_6400$Repeat)
 
-#visualise ----
-
-without_drop <- filter(ACi_6400, Light == "1800")
 
 #remove plots based on graphs that look like experiment was wrong ----
 
@@ -37,6 +34,10 @@ to_remove <- c("1012 2", "1026 2", "1062 1", "1129 1", "1148 2", "1167 2", "1173
                "2164 2", "2169 1", "2191 2", "2333 3", "2241 3", "2242 2", "2275 3")
 
 ACi_6400 <- ACi_6400[!ACi_6400$PlotRepeat %in% to_remove,]
+
+#visualise ----
+
+without_drop <- filter(ACi_6400, Light == "1800")
 
 #A without light drop 
 
@@ -104,8 +105,7 @@ after_drop <- filter(ACi_6400, Light == "200")
 before_drop <- filter(before_drop, Elapsed_time >= 372) #get last minute
 after_drop <- filter(after_drop, Elapsed_time >= 1020) #get last minute
                        
-mean_Asat <- ddply(before_drop, .(Plot, Repeat), summarise, mean_Asat = mean(Photo, na.rm = TRUE), 
-                   sd_Asat = sd(Photo, na.rm=TRUE), se_Asat = sd_Asat/sqrt(10)) 
+mean_Asat <- ddply(before_drop, .(Plot, Repeat), summarise, mean_Asat = mean(Photo, na.rm = TRUE)) 
 
 mean_gs_Asat <- ddply(before_drop, .(Plot, Repeat), summarise, mean_gs_Asat = mean(Cond, na.rm = TRUE),
                       sd_gs_Asat = sd(Cond, na.rm=TRUE), se_gs_Asat = sd_gs_Asat/sqrt(10)) 
@@ -123,21 +123,6 @@ ggplot(data=mean_gs_Alow, aes(x=Plot, y=mean_gs_Alow)) + geom_point()
 
 ggplot(data=mean_Asat, aes(x=reorder(Plot, mean_Asat, FUN = median), y = mean_Asat)) + geom_boxplot()
 
-# ggplot(data=mean_Asat, aes(x=se_Asat)) + geom_density() + geom_vline(aes(xintercept=0.4)) #suggest 0.4 cutoff 
-# ggplot(data=mean_Alow, aes(x=se_Alow)) + geom_density() + xlim(0,3) #suggest 0.4 cutoff again
-# 
-# ggplot(data=mean_gs_Asat, aes(x=se_gs_Asat)) + geom_density() #suggest 0.005 cutoff
-# ggplot(data=mean_gs_Alow, aes(x=se_gs_Alow)) + geom_density() +xlim(0,0.005) #suggest 0.005 cutoff
-
-#make a big dataframe and then cut it down based on standard errors ----
-
-cleaned_6400_data <- merge(mean_Alow, mean_Asat, by = c("Plot", "Repeat"))
-cleaned_6400_data <- merge(cleaned_6400_data, mean_gs_Alow, by = c("Plot", "Repeat"))
-cleaned_6400_data <- merge(cleaned_6400_data, mean_gs_Asat, by = c("Plot", "Repeat"))
-
-cleaned_6400_data <- filter(cleaned_6400_data, se_Asat <= 0.4, se_Alow <= 0.4, se_gs_Asat <= 0.005, se_gs_Alow <= 0.005)
-
-cleaned_6400_data <- select(cleaned_6400_data, "Plot", "Repeat", "mean_Asat", "mean_Alow", "mean_gs_Asat", "mean_gs_Alow")
 
 #get genotype and other factors in ----
 
@@ -156,3 +141,9 @@ ggplot(data=data, aes(x=reorder(Name, mean_Asat, FUN = median), y = mean_Asat)) 
 
 #export this so i can use in another script 
 write_xlsx(cleaned_6400_data,"~/OneDrive - University of Cambridge/MPhil/GitLink/ExportedData/6400data.xlsx")
+
+datafor6400blups <- merge(fielddesign, mean_Asat, by = c("Plot"))
+datafor6400blups <- merge(datafor6400blups, other_info, by = c("Plot", "Repeat"))
+datafor6400blups <- select(datafor6400blups, "Name", "Plot", "Rep","Repeat", "mean_Asat", "Date", "Block", "Column")
+
+write_xlsx(datafor6400blups,"~/OneDrive - University of Cambridge/MPhil/GitLink/ExportedData/6400dataforblups.xlsx")
