@@ -84,7 +84,7 @@ hr$tabsmr
 c_blups <- hr$blups
 names(c_blups)[2] <- "c_blups"
 
-ggplot(c_blups, aes(x=c_blups)) + geom_density(color="darkblue", fill="lightblue") + xlab("c (induction) BLUPs") +
+ggplot(c_blups, aes(x=c_blups)) + geom_density(color="darkblue", fill="lightblue") + xlab("a (relaxation) BLUPs") +
   ylab("Density") + theme_classic()
 
 #d ----
@@ -101,7 +101,7 @@ hr$tabsmr
 d_blups <- hr$blups
 names(d_blups)[2] <- "d_blups"
 
-ggplot(d_blups, aes(x=d_blups)) + geom_density(color="darkblue", fill="lightblue") + xlab("d (induction) BLUPs") +
+ggplot(d_blups, aes(x=d_blups)) + geom_density(color="darkblue", fill="lightblue") + xlab("b (relaxation) BLUPs") +
   ylab("Density") + theme_classic()
 
 
@@ -119,7 +119,7 @@ hr$tabsmr
 e_blups <- hr$blups
 names(e_blups)[2] <- "e_blups"
 
-ggplot(e_blups, aes(x=e_blups)) + geom_density(color="darkblue", fill="lightblue") + xlab("e (induction) BLUPs") +
+ggplot(e_blups, aes(x=e_blups)) + geom_density(color="darkblue", fill="lightblue") + xlab("c (relaxation) BLUPs") +
   ylab("Density") + theme_classic()
 
 #f ----
@@ -154,6 +154,9 @@ hr$tabsmr
 g_blups <- hr$blups
 names(g_blups)[2] <- "g_blups"
 
+ggplot(g_blups, aes(x=g_blups)) + geom_density(color="darkblue", fill="lightblue") + xlab("b phi PSII in dark BLUPs") +
+  ylab("Density") + theme_classic()
+
 #h ----
 
 hr <- H2cal(data = NPQ_means,
@@ -167,6 +170,9 @@ hr <- H2cal(data = NPQ_means,
 hr$tabsmr
 h_blups <- hr$blups
 names(h_blups)[2] <- "h_blups"
+
+ggplot(h_blups, aes(x=h_blups)) + geom_density(color="darkblue", fill="lightblue") + xlab("c phi PSII in dark BLUPs") +
+  ylab("Density") + theme_classic()
 
 #max amp ----
 
@@ -182,6 +188,9 @@ hr$tabsmr
 max_amp_blups <- hr$blups
 names(max_amp_blups)[2] <- "max_amp_blups"
 
+ggplot(max_amp_blups, aes(x=max_amp_blups)) + geom_density(color="darkblue", fill="lightblue") + xlab("max NPQ amp BLUPs") +
+  ylab("Density") + theme_classic()
+
 #initial slope ----
 
 hr <- H2cal(data = NPQ_means,
@@ -195,6 +204,10 @@ hr <- H2cal(data = NPQ_means,
 hr$tabsmr
 gradient_blups <- hr$blups
 names(gradient_blups)[2] <- "gradient_blups"
+
+ggplot(gradient_blups, aes(x=gradient_blups)) + geom_density(color="darkblue", fill="lightblue") + xlab("NPQ gradient BLUPs") +
+  ylab("Density") + theme_classic()
+
 
 #end NPQ ----
 

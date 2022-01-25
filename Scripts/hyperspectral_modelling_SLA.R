@@ -87,12 +87,13 @@ rm(sample_info,Spectra)
 #step 7: create cal/val datasets----
 
 method <- "dplyr"
-split_data <- spectratrait::create_data_split(dataset=plsr_data, 
-                                              approach=method, 
-                                              split_seed=7529075, 
-                                              prop=0.8, group_variables="Repeat")
-cal.plsr.data <- split_data$cal_data
-val.plsr.data <- split_data$val_data
+
+#do these by 'hand'!
+
+plsr_data <- plsr_data[order(plsr_data$SLA),]
+
+cal.plsr.data <- plsr_data[seq(1,nrow(plsr_data),4),] #every 4th value --> valibration dataset is therefore 25% of dataset
+val.plsr.data <- plsr_data[-seq(1,nrow(plsr_data),4),] #other 75% of dataset 
 
 print(paste("Cal observations: ",dim(cal.plsr.data)[1],sep=""))
 print(paste("Val observations: ",dim(val.plsr.data)[1],sep=""))
