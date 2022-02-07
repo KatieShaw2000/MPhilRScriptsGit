@@ -64,18 +64,27 @@ plot(fitting)
 
 TPU_fitting <- fitacis(to_fit, "PlotRepeat", fitmethod = "bilinear", fitTPU=TRUE)
 TPU_fitting_output <- coef(TPU_fitting)
-TPU_fitting_output <- select(TPU_fitting_output, PlotRepeat,Vcmax,Jmax)
+TPU_fitting_output <- select(TPU_fitting_output, PlotRepeat,Vcmax,Jmax, TPU)
+TPU_fitting_output <- TPU_fitting_output %>% separate(PlotRepeat, c("Plot", "Repeat"))
 plot(fitting)
 
 names(TPU_fitting_output)[2] <- "TPU_Vcmax"
 names(TPU_fitting_output)[3]<- "TPU_Jmax"
+
+names <- read_excel("~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/FieldDesign.xlsx")
+names <- names[,c(6,1)]
+names(names)[2] <- "Plot"
+
+combined <- merge(names, TPU_fitting_output, by = "Plot")
+combined <- combined[,c(2,1,3,4,5,6)]
+names(combined)[1] <- "Genotype"
 
 # PDFpath1 <- "~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/LICOR 6800 files/ACiFitting_TPU.pdf"
 # pdf(file=PDFpath1)
 # plot(TPU_fitting) 
 # dev.off()
 
-write.csv(TPU_fitting_output, "~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/TPUACi.csv")
+write.csv(combined, "~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/TPUACi_to_email.csv")
 
 comparing <- merge(fitting_output, TPU_fitting_output, by = "PlotRepeat")
 

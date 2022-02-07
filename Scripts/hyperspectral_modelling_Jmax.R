@@ -40,12 +40,11 @@ parms <- parms[-c(18,50,225,235),]
 jmax <- parms[,c(1,3)]
 jmax <- jmax[order(jmax$TPU_Jmax),]
 
-#join the vcmax data with the hyperspectral data ----
+#join the jmax data with the hyperspectral data ----
 
 jmax <- jmax %>% separate(PlotRepeat, c("Plot", "Repeat"))
 
 all <- merge(jmax, hyperspectral, by = c("Plot", "Repeat"))
-all <- all[,-4]
 all <- all[order(all$TPU_Jmax),]
 names(all)[3] <- "jmax"
 
@@ -74,7 +73,7 @@ output_dir <- ("~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/
 
 #step 5 ----
 
-Start.wave <- 350
+Start.wave <- 500
 End.wave <- 2500
 wv <- seq(Start.wave, End.wave, 1)
 Spectra <- as.matrix(all[,names(all) %in% wv])
@@ -158,7 +157,7 @@ random_seed <- 7529075
 seg <- 80
 maxComps <- 16
 iterations <- 50
-prop <- 0.60
+prop <- 0.70
 if (method=="pls") {
   nComps <- spectratrait::find_optimal_components(dataset=cal.plsr.data, method=method, 
                                                   maxComps=maxComps, seg=seg, 

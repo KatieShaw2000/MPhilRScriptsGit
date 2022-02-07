@@ -24,6 +24,32 @@ names(location)[1] <- "Name"
 parms <- read_csv("~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/BLUPs_for_locations.csv")
 combined <- merge(location, parms, by = "Name")
 
+#add in dividing the photosynthetic parameters by SLA ----
+
+combined$Vcmax_SLA <- combined$TPU_Vcmax/combined$SLA_blups
+combined$Jmax_SLA <- combined$TPU_Jmax/combined$SLA_blups
+combined$asat_SLA <- combined$asat/combined$SLA_blups
+
+asat_SLA <- ggplot(combined, aes(x=Overall, y=asat_SLA, fill=Overall)) + geom_boxplot() +
+  theme_bw() + theme(axis.text.x = element_text(size=12), axis.text.y = element_text(size=12),
+                     axis.title = element_text(size=14)) + xlab("Location Type") +
+  scale_x_discrete(labels = c("coast" = "Coast", "e desert" = "E Desert", "north" = "North")) + ylab("Asat/SLA") +
+  theme(legend.position = "none")
+
+Jmax_SLA <- ggplot(combined, aes(x=Overall, y=Jmax_SLA, fill=Overall)) + geom_boxplot() +
+  theme_bw() + theme(axis.text.x = element_text(size=12), axis.text.y = element_text(size=12),
+                     axis.title = element_text(size=14)) + xlab("Location Type") +
+  scale_x_discrete(labels = c("coast" = "Coast", "e desert" = "E Desert", "north" = "North")) + ylab("Jmax/SLA") +
+  theme(legend.position = "none")
+
+Vcmax_SLA <- ggplot(combined, aes(x=Overall, y=Vcmax_SLA, fill=Overall)) + geom_boxplot() +
+  theme_bw() + theme(axis.text.x = element_text(size=12), axis.text.y = element_text(size=12),
+                     axis.title = element_text(size=14)) + xlab("Location Type") +
+  scale_x_discrete(labels = c("coast" = "Coast", "e desert" = "E Desert", "north" = "North")) + ylab("Vcmax/SLA") +
+  theme(legend.position = "none")
+
+ggarrange(asat_SLA, Jmax_SLA, Vcmax_SLA, ncol=3, nrow=1)
+
 #get some plots ----
 
 iWUE <- ggplot(combined, aes(x=Overall, y=iWUE, fill=Overall)) + geom_boxplot() +

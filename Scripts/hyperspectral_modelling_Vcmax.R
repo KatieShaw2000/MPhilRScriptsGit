@@ -45,7 +45,6 @@ vcmax <- vcmax[order(vcmax$TPU_Vcmax),]
 vcmax <- vcmax %>% separate(PlotRepeat, c("Plot", "Repeat"))
 
 all <- merge(vcmax, hyperspectral, by = c("Plot", "Repeat"))
-all <- all[,-4]
 all <- all[order(all$TPU_Vcmax),]
 names(all)[3] <- "vcmax"
 
@@ -74,7 +73,7 @@ output_dir <- ("~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/
 
 #step 5 ----
 
-Start.wave <- 350
+Start.wave <- 500
 End.wave <- 2500
 wv <- seq(Start.wave, End.wave, 1)
 Spectra <- as.matrix(all[,names(all) %in% wv])
@@ -87,8 +86,8 @@ rm(Spectra, sample_info)
 
 #step 7: get cal/val datasets ----
 
-cal.plsr.data <- plsr_data[-seq(1,nrow(plsr_data),3),]
-val.plsr.data <- plsr_data[seq(1,nrow(plsr_data),3),]
+cal.plsr.data <- plsr_data[-seq(1,nrow(plsr_data),4),]
+val.plsr.data <- plsr_data[seq(1,nrow(plsr_data),4),]
 
 #let's plot to see if look normally distributed
 text_loc <- c(max(hist(cal.plsr.data[,paste0(inVar)], plot=FALSE)$counts),
