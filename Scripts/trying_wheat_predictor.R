@@ -40,7 +40,7 @@ colnames(jump_8) <- names
 
 corrected <- rbind(jump_1,jump_2,jump_3,jump_4,jump_5,jump_6,jump_7,jump_8)
 
-rm(jump_1,jump_2,jump_3,jump_4,jump_5,jump_6,jump_7,jump_8,names,names_2)
+rm(jump_1,jump_2,jump_3,jump_4,jump_5,jump_6,jump_7,jump_8,names)
 
 #plot the original spectra ----
 
@@ -67,3 +67,5 @@ for (i in 1:nrow(corrected)){
 }
 
 dev.off()
+
+write.csv(corrected,"~/OneDrive - University of Cambridge/MPhil/GitLink/ExportedData/hyperspectral_corrected.csv",row.names=F)

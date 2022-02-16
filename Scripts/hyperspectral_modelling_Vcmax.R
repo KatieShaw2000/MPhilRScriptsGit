@@ -31,8 +31,9 @@ setwd("~/OneDrive - University of Cambridge/MPhil/GitLink/ExportedData")
 
 #get data ---- 
 
-hyperspectral <- read_csv("hyperspectral.csv")
-hyperspectral <- hyperspectral[,-1]
+hyperspectral <- read_csv("hyperspectral_corrected.csv") #using jump corrected data
+hyperspectral <- hyperspectral %>% separate(PlotRepeat, c("Plot", "Repeat"))
+
 parms <- read_csv("~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/TPUACi.csv")
 parms <- parms[,-1]
 parms <- parms[-c(18,50,225,235),]

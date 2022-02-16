@@ -31,19 +31,9 @@ setwd("~/OneDrive - University of Cambridge/MPhil/GitLink/ExportedData")
 
 #get data ---- 
 
-hyperspectral <- read_csv("hyperspectral.csv")
+hyperspectral <- read_csv("hyperspectral.csv") #using jump corrected data
 hyperspectral <- hyperspectral[,-1]
-
-#trying out getting a file with 200 graphs to use for wheat physiology predictor ----
-
-hyperspectral$PlotRepeat <- paste(hyperspectral$Plot, hyperspectral$Repeat)
-test <- hyperspectral[1:200,]
-test <- test[,c(2004,3:2003)]
-test <- t(test)
-test <- as.data.frame(test)
-test <- cbind(rownames(test), data.frame(test, row.names=NULL))
-
-write_csv(test, "~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/for_wheat_predictor.csv")
+hyperspectral <- hyperspectral[,-c(498:508)] #remove 5nm either side the 1000nm jump
 
 #SLA data----
 
@@ -82,9 +72,9 @@ output_dir <- ("~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/
 
 #step 5 ----
 
-Start.wave <- 500
-End.wave <- 2500
-wv <- seq(Start.wave, End.wave, 1)
+Start.wave <- c(500:994)
+End.wave <- c(1006:2500)
+wv <- c(Start.wave, End.wave)
 Spectra <- as.matrix(all[,names(all) %in% wv])
 colnames(Spectra) <- c(paste0("Wave_", wv))
 sample_info <- all[,names(all) %notin% seq(350,2500,1)]

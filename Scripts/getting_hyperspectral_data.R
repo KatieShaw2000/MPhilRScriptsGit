@@ -130,5 +130,5 @@ write.csv(spec_6,"~/OneDrive - University of Cambridge/MPhil/GitLink/ExportedDat
 spec_7 <- for_predictor[,c(1,1202:1401)]
 write.csv(spec_7,"~/OneDrive - University of Cambridge/MPhil/GitLink/ExportedData/hyperspec wheat predictor/spec_7.csv",row.names=F)
 
-spec_8 <- for_predictor[,c(1,1402:1486)]
+spec_8 <- for_predictor[,c(1,1402:1487)]
 write.csv(spec_8,"~/OneDrive - University of Cambridge/MPhil/GitLink/ExportedData/hyperspec wheat predictor/spec_8.csv",row.names=F)
