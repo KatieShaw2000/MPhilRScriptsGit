@@ -107,13 +107,13 @@ all_pca <- all_blups
 all_pca$aci <- "No"
 all_pca$aci[all_pca$TPU_Vcmax > 0] <- "Yes"
 
-all_pca <- all_pca[,-c(4,5)]
+all_pca <- all_pca[,-c(4,5,11,12,13,14)]
 all_pca <- all_pca[,-2]
 rownames(all_pca) <- all_pca[,1]
 all_pca <- all_pca[,-1]
 all_pca <- na.omit(all_pca)
 
-pca <- prcomp(all_pca[,1:7], scale = TRUE)
+pca <- prcomp(all_pca[,1:6], scale = TRUE)
 summary(pca)
 
 fviz_eig(pca) #scree plot of variances explained by each principal component
