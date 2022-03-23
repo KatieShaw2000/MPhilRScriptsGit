@@ -35,6 +35,23 @@ names(additional_aci)[5] <- "aci_asat"
 
 all_blups <- list(heading_date, SLA, asat, NPQ) %>% reduce(left_join, by="Name")
 
+#get correlation plot for supergroup presentation ----
+
+all_blups <- na.omit(all_blups)
+names(all_blups)[2] <- "Heading Date"
+names(all_blups)[3] <- "SLA"
+names(all_blups)[4] <- "Asat"
+names(all_blups)[5] <- "End NPQ"
+names(all_blups)[6] <- "Max NPQ"
+names(all_blups)[7] <- "Initial NPQ Gradient"
+names(all_blups)[8] <- "a induction"
+names(all_blups)[9] <- "b induction"
+names(all_blups)[10] <- "a relaxation"
+names(all_blups)[11] <- "b relaxation"
+names(all_blups)[12] <- "c relaxation"
+
+corrplot(cor(all_blups[,5:12]), method= "circle", type = "upper", diag = FALSE)
+
 #comparing asats ----
 
 asat <- merge(asat, additional_aci, by = "Name")
@@ -129,3 +146,8 @@ fviz_pca_biplot(pca2, repel = TRUE,
                 col.var = "#2E9FDF", # Variables color
                 col.ind = "#696969") # Individuals color
 
+
+
+leaf_masses <- read_excel("Desktop/Reweighing leaf samples.xlsx")
+ggplot(leaf_masses, aes(x= leaf_masses$`My mass`, y=leaf_masses$`Vincent mass`)) + geom_point()+
+  xlab("Katie Masses") + ylab("Vincent Masses") + xlim(0.02,0.08) + ylim(0.02,0.08)
