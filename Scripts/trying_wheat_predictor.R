@@ -69,3 +69,20 @@ for (i in 1:nrow(corrected)){
 dev.off()
 
 write.csv(corrected,"~/OneDrive - University of Cambridge/MPhil/GitLink/ExportedData/hyperspectral_corrected.csv",row.names=F)
+
+
+#putting parameter PLSR data frame from the wheat predictor into one data frame ----
+
+setwd("~/Desktop")
+jump_1 <- read_csv("spec_1_PLSR.csv",col_names=FALSE)
+jump_2 <- read_csv("spec_2_PLSR.csv",col_names=FALSE)
+jump_3 <- read_csv("spec_3_PLSR.csv",col_names=FALSE)
+jump_4 <- read_csv("spec_4_PLSR.csv",col_names=FALSE)
+jump_5 <- read_csv("spec_5_PLSR.csv",col_names=FALSE)
+jump_6 <- read_csv("spec_6_PLSR.csv",col_names=FALSE)
+jump_7 <- read_csv("spec_7_PLSR.csv",col_names=FALSE)
+jump_8 <- read_csv("spec_8_PLSR.csv",col_names=FALSE)
+
+parms <- rbind(jump_1,jump_2,jump_3,jump_4,jump_5,jump_6,jump_7,jump_8)
+
+write.csv(parms,"~/Desktop/wheat_predictor_parms.csv",row.names=F)

@@ -56,7 +56,7 @@ tidied_data <- tidied_data[,-5]
 
 tidied_data <- tidied_data[!(tidied_data$Repeat_two=="0"),]
 
-tidied_data <- tidied_data[,-c(5:154)]
+#tidied_data <- tidied_data[,-c(5:154)]
 
 #plot the raw data ----
 
@@ -80,7 +80,7 @@ tidied_data <- tidied_data[,-c(5:154)]
 
 #get means ----
 
-hyperspectral_means <- aggregate(tidied_data[,5:2005], list(tidied_data$Plot, tidied_data$Repeat), mean)
+hyperspectral_means <- aggregate(tidied_data[,5:2155], list(tidied_data$Plot, tidied_data$Repeat), mean)
 names(hyperspectral_means)[1] <- "Plot"
 names(hyperspectral_means)[2] <- "Repeat"
 hyperspectral_means <- hyperspectral_means[-c(1487:1489),]
@@ -88,13 +88,14 @@ hyperspectral_means <- hyperspectral_means[-c(1487:1489),]
 #make this the file! 
 write.csv(hyperspectral_means,"~/OneDrive - University of Cambridge/MPhil/GitLink/ExportedData/hyperspectral.csv")
 
+hyperspectral_means <- read_csv("~/OneDrive - University of Cambridge/MPhil/GitLink/ExportedData/hyperspectral.csv")
 #get the files into format to use the wheat predictor ----
 
 for_predictor <- hyperspectral_means
 for_predictor$PlotRepeat <- paste(for_predictor$Plot, for_predictor$Repeat)
 for_predictor <- for_predictor %>% 
   select(c(PlotRepeat), everything())
-for_predictor <- for_predictor[,-c(2,3)]
+for_predictor <- for_predictor[,-c(2,3,4)]
 for_predictor <- t(for_predictor)
 for_predictor <- as.data.frame(for_predictor)
 
