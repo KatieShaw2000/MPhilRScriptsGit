@@ -39,4 +39,8 @@ t.test(day_5_40$Average, day_5_80$Average, var.equal = T)
 #Plot data ----
 
 ggplot(soil_data, aes(x=Treatment, y=Average, color = Treatment)) + geom_boxplot() +
-  facet_wrap(~Date + Time, ncol = 5) + ylab("% Volume Water Content")
+  facet_wrap(~`Location Type` + Genotype , ncol = 4) + ylab("% Volume Water Content")
+
+soil_data$`Location Type` <- as.factor(soil_data$`Location Type`)
+
+two_way <- aov(Average ~ Treatment + `Location Type`, data = soil_data)

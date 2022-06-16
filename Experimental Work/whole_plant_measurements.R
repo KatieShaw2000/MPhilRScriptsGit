@@ -17,6 +17,10 @@ combined <- merge(mass, area, by = "Number")
 names(combined)[3] <- "Location"
 combined$Treatment <- as.factor(combined$Treatment)
 
+#Export data ----
+
+write.csv(combined, "All Parameters/whole_plant.csv")
+
 #Plot them ----
 
 order_location_type <- within(combined, Genotype <- factor(Genotype, levels=c("B1K-05-12", 
@@ -28,8 +32,72 @@ order_location_type <- within(combined, Genotype <- factor(Genotype, levels=c("B
                                                                          "B1K-10-01",
                                                                          "B1K-49-10")))
 
-ggplot(order_location_type, aes(x=Treatment, y=`Dried mass`, color=Treatment)) + geom_boxplot() +
-  facet_wrap(~Genotype + Location, ncol=4) + ylab("Total aboveground dried biomass (g)")
+order_basic <- within(combined, Location <- factor(Location, levels = c("Desert", "Coastal")))
 
-ggplot(order_location_type, aes(x=Treatment, y=`Total leaf area`, color=Treatment)) + geom_boxplot() +
-  facet_wrap(~Genotype + Location, ncol=4) + ylab(expression(paste("Total Leaf Area (cm"^"2",")")))
+#Get plots for thesis ----
+
+mass_plot1 <- ggplot(order_location_type, aes(x=Treatment, y=`Dried mass`, color=Treatment)) + geom_boxplot() +
+  facet_wrap(~Genotype + Location, ncol=4)+
+  theme(legend.position = "none") +
+  ylab("Total Aboveground Dried Biomass (g)") +
+  scale_color_manual(values=c("red","blue")) 
+
+mass_plot2 <- ggplot(order_basic, aes(x=Treatment, y=`Dried mass`, color=Treatment)) + geom_boxplot() +
+  facet_wrap(~Location, ncol=4)+
+  ylab("Total Aboveground Dried Biomass (g)") +
+  scale_color_manual(values=c("red","blue")) 
+
+ggarrange(mass_plot1, mass_plot2, ncol = 2, labels = c("A", "B"))
+
+area_plot1 <- ggplot(order_location_type, aes(x=Treatment, y=`Total leaf area`, color=Treatment)) + geom_boxplot() +
+  facet_wrap(~Genotype + Location, ncol=4)+
+  theme(legend.position = "none") +
+  ylab(expression(paste("Total Leaf Area (cm"^"2",")"))) +
+  scale_color_manual(values=c("red","blue")) 
+
+area_plot2 <- ggplot(order_basic, aes(x=Treatment, y=`Total leaf area`, color=Treatment)) + geom_boxplot() +
+  facet_wrap(~Location, ncol=4)+
+  ylab(expression(paste("Total Leaf Area (cm"^"2",")"))) +
+  scale_color_manual(values=c("red","blue")) 
+
+ggarrange(area_plot1, area_plot2, ncol = 2, labels = c("A", "B"))
+
+#Do stats tests for dried mass ----
+
+mass_two_way <- aov(`Dried mass` ~ Location + Treatment, data = combined) 
+mass_interaction <- aov(`Dried mass` ~ Location * Treatment, data = combined)
+mass_nested <- aov(`Dried mass` ~ Location/Genotype + Treatment, data = combined)
+
+mass_models <- list(mass_two_way, mass_nested)
+mass_models_names <- c("two_way", "nested")
+
+aictab(mass_models, modnames = mass_models_names)
+
+plot(mass_nested)
+
+mean_mass_desert_40 <- mean(combined[combined$Location == "Desert" & combined$Treatment == "40",]$`Dried mass`)
+mean_mass_desert_80 <- mean(combined[combined$Location == "Desert" & combined$Treatment == "80",]$`Dried mass`)
+mean_mass_coast_40 <- mean(combined[combined$Location == "Coastal" & combined$Treatment == "40",]$`Dried mass`)
+mean_mass_coast_80 <- mean(combined[combined$Location == "Coastal" & combined$Treatment == "80",]$`Dried mass`)
+
+#Do stats tests for total leaf area ---
+
+area_two_way <- aov(`Total leaf area` ~ Location + Treatment, data = combined)
+area_interaction <- aov(`Total leaf area` ~ Location + Treatment + Location*Treatment, data = combined)
+area_nested <- aov(`Total leaf area` ~ Location/Genotype + Treatment, data = combined)
+area_interaction_nested <- aov(`Total leaf area` ~ Location/Genotype + Treatment + Location*Treatment, data = combined)
+
+area_models <- list(area_two_way, area_interaction, area_nested, area_interaction_nested)
+area_models_names <- c("two way", "interaction", "nested", "both")
+
+aictab(area_models, modnames = area_models_names)
+
+plot(area_interaction_nested)
+
+mean_area_desert_40 <- mean(combined[combined$Location == "Desert" & combined$Treatment == "40",]$`Total leaf area`)
+mean_area_desert_80 <- mean(combined[combined$Location == "Desert" & combined$Treatment == "80",]$`Total leaf area`)
+mean_area_coast_40 <- mean(combined[combined$Location == "Coastal" & combined$Treatment == "40",]$`Total leaf area`)
+mean_area_coast_80 <- mean(combined[combined$Location == "Coastal" & combined$Treatment == "80",]$`Total leaf area`)
+
+
+

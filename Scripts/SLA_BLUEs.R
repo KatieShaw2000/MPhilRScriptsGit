@@ -102,27 +102,3 @@ compare <- merge(SLA_emmean, SLA_blups_genotypes, by = "Name")
 
 ggplot(compare, aes(x=BLUEs, y = adjusted_SLA)) + geom_point() +
   xlim(160,300) + ylim(160,300) + ylab("BLUPs")
-
-#----
-#var_SLA <- as.data.frame(VarCorr(SLA_model, comp = "vcov"))
-#head(var_SLA)
-
-#h_SLA <- var_SLA[1,4]/sum(var_SLA[,4])
-
-#residuals <- residuals(SLA_model)
-#resisuals <- as.data.frame(residuals)
-#new_SLA <- data.frame(SLA_means, residuals)
-
-#plot residuals to see if there seems to be a spatial pattern ----
-
-#rep1 <- subset(new_SLA, Rep == "1")
-#rep2 <- subset(new_SLA, Rep == "2")
-
-#SLA_grid1 <- desplot(rep1, SLA~Block*Column)
-#SLA_grid2 <- desplot(rep2, SLA~Block*Column)
-
-#residuals_grid1 <- desplot(rep1, residuals~Block*Column)
-#residuals_grid2 <- desplot(rep2, residuals~Block*Column)
-
-#get BLUEs ----
-

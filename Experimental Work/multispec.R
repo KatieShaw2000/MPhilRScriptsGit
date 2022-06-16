@@ -6,6 +6,7 @@ setwd("~/Library/CloudStorage/OneDrive-UniversityofCambridge/MPhil/Experimental 
 
 library(ggplot2)
 library(readxl)
+library(AICcmodavg)
 
 #Get data ----
 
@@ -30,6 +31,10 @@ names(multispec)[3] <- "Location"
 
 multispec$combined <- rowMeans(multispec[,c(5,6)])
 
+#Export data ----
+
+write.csv(multispec, "All Parameters/multispec.csv")
+
 #Plot the data ----
 
 order_location_type <- within(multispec, Genotype <- factor(Genotype, levels=c("B1K-05-12", 
@@ -40,11 +45,44 @@ order_location_type <- within(multispec, Genotype <- factor(Genotype, levels=c("
                                                                                   "B1K-17-17",
                                                                                   "B1K-10-01",
                                                                                   "B1K-49-10")))
-ggplot(order_location_type, aes(x=Treatment, y=PhiPSII_20th)) + geom_boxplot() +
-  facet_wrap(~Genotype + Location, ncol=4)
 
-ggplot(order_location_type, aes(x=Treatment, y=PhiPSII_30th)) + geom_boxplot() +
-  facet_wrap(~Genotype + Location, ncol=4)
+order_basic <- within(multispec, Location <- factor(Location, levels = c("Desert", "Coastal")))
 
-ggplot(order_location_type, aes(x=Treatment, y=combined, color = Treatment)) + geom_boxplot() +
-  facet_wrap(~Genotype + Location, ncol=4) + ylab("PhiPSII")
+phipsii_plot1 <- ggplot(order_location_type, aes(x=Treatment, y=combined, color=Treatment)) + geom_boxplot() +
+  facet_wrap(~Genotype + Location, ncol=4)+
+  theme(legend.position = "none") +
+  ylab("PhiPSII") +
+  scale_color_manual(values=c("red","blue")) 
+
+phipsii_plot2 <- ggplot(order_basic, aes(x=Treatment, y=combined, color = Treatment)) + geom_boxplot() +
+  facet_wrap(~Location) + 
+  ylab("PhiPSII") +
+  scale_color_manual(values=c("red","blue"))
+
+ggarrange(phipsii_plot1, phipsii_plot2, ncol = 2, labels = c("A", "B"))
+
+phipsii_two_way <- aov(combined ~ Location + Treatment, data = multispec)
+phipsii_interaction <- aov(combined ~ Location + Treatment + Location*Treatment, data = multispec)
+phipsii_nested <- aov(combined ~ Location/Genotype + Treatment, data = multispec)
+phipsii_interaction_nested <- aov(combined ~ Location/Genotype + Treatment + Treatment*Location, data = multispec)
+
+phipsii_models <- list(phipsii_two_way, phipsii_interaction, phipsii_nested, phipsii_interaction_nested)
+phipsii_models_names <- c("two_way", "interaction", "nested", "both")
+
+aictab(phipsii_models, modnames = phipsii_models_names)
+
+plot(phipsii_interaction_nested)
+
+summary(phipsii_interaction_nested)
+
+mean_phipsii_desert_40 <- mean(multispec[multispec$Location == "Desert" & multispec$Treatment == "40",]$combined)
+mean_phipsii_desert_80 <- mean(multispec[multispec$Location == "Desert" & multispec$Treatment == "80",]$combined)
+mean_phipsii_coast_40 <- mean(multispec[multispec$Location == "Coastal" & multispec$Treatment == "40",]$combined)
+mean_phipsii_coast_80 <- mean(multispec[multispec$Location == "Coastal" & multispec$Treatment == "80",]$combined)
+
+
+
+
+
+
+

@@ -18,8 +18,29 @@ library(data.table)
 
 #get data ----
 
-NPQdata <- read_excel("Final Scripts Output/NPQ_initial_dataset.xlsx")
+NPQdata <- read_excel("ExportedData/NPQdata.xlsx")
 NPQdata$plot_id <- paste(NPQdata$Plot, NPQdata$Repeat)
+
+#names(NPQdata)[5] <- "values"
+
+#ggplot(NPQdata[1:21,], aes(x=cumulative_time, y=values)) + geom_point()
+
+#exponential fitting for induction test ----
+
+# induction_data <- filter(NPQdata, cumulative_time <= 600)
+# 
+# test <- induction_data[1:13,]
+# 
+# induction_model <- nlsLM(NPQ_values ~ a*(1-exp(-b*cumulative_time)),data=test, 
+#                          start = list(a=3.5, b=0.005))
+# 
+# a_fit <- induction_model$m$getAllPars()[1]
+# b_fit <- induction_model$m$getAllPars()[2]
+# 
+# plot(test$time_post_light_on, test$NPQ_values)
+# x <- seq(0,600, by=6)
+# y <- predict(induction_model, list(cumulative_time=x))
+# points(x,y, type="l")
 
 #make function to use on all data for induction NPQ----
 
@@ -48,6 +69,46 @@ names(induction_plot_ids) <- induction_plot_ids
 all_induction_fits <- lapply(induction_plot_ids, function(x) NPQ_induction_fitting(induction_data,x))
 all_induction_fits <- rbindlist(all_induction_fits)
 
+ggplot(all_induction_fits, aes(x=plot, y=a_confint)) + geom_point()
+ggplot(all_induction_fits, aes(x=plot, y=b_confint)) + geom_point()
+
+#plot outputs ----
+
+# PDFpath <- "~/OneDrive - University of Cambridge/MPhil/NPQinduction.pdf"
+# pdf(file=PDFpath)
+# 
+# for (value in unique(induction_data$plot_id)){
+#   
+#   subset <- subset(induction_data, plot_id == value)
+#   plot(subset$cumulative_time, subset$NPQ_values, 
+#        main=paste("Plot of", value))
+#   x <- seq(0,600,by=6)
+#   induction_model <- nlsLM(NPQ_values ~ a*(1-exp(-b*cumulative_time)),data=subset, 
+#                            start = list(a=3, b=0.005))
+#   y <- predict(induction_model, list(cumulative_time=x))
+#   points(x,y, type="l")
+# }
+# 
+# dev.off()
+  
+#exponential fitting for relaxation ----
+# 
+# relaxation_data <- filter(NPQdata, cumulative_time >= 600)
+# 
+# test2 <- relaxation_data[1:9,]
+# 
+# relaxation_model <- nlsLM(NPQ_values ~ c*(exp(-d*time_post_light_off)) + e, data=test2,
+#                           start=list(c=3,d=0.005,e=0.5))
+# 
+# c_fit <- relaxation_model$m$getAllPars()[1]
+# d_fit <- relaxation_model$m$getAllPars()[2]
+# e_fit <- relaxation_model$m$getAllPars()[3]
+# 
+# plot(test2$time_post_light_off, test2$NPQ_values)
+# x <- seq(0,720,by=5)
+# y <- predict(relaxation_model, list(time_post_light_off=x))
+# points(x,y, type="l")
+
 #make function to use on all data for relaxation NPQ----
 
 relaxation_data <- filter(NPQdata, cumulative_time >= 600)
@@ -73,6 +134,25 @@ names(relaxation_plot_ids) <- relaxation_plot_ids
 all_relaxation_fits <- lapply(relaxation_plot_ids, function(x) NPQ_relaxation_fitting(relaxation_data,x))
 all_relaxation_fits <- rbindlist(all_relaxation_fits)
 
+#Plot outputs ----
+
+# PDFpath2 <- "~/OneDrive - University of Cambridge/MPhil/NPQrelaxation.pdf"
+# pdf(file=PDFpath2)
+# 
+# for (value in unique(relaxation_data$plot_id)){
+#   
+#   subset <- subset(relaxation_data, plot_id == value)
+#   plot(subset$time_post_light_off, subset$NPQ_values, 
+#        main=paste("Plot of", value))
+#   x <- seq(0,720,by=5)
+#   relaxation_model <- nlsLM(NPQ_values ~ c*(exp(-d*time_post_light_off)) + e, data=subset,
+#                             start=list(c=3,d=0.005,e=0.5))
+#   y <- predict(relaxation_model, list(time_post_light_off=x))
+#   points(x,y, type="l")
+# }
+# 
+# dev.off()
+
 #initial slope NPQ----
 
 initial_data <- filter(NPQdata, cumulative_time <= 40)
@@ -92,7 +172,7 @@ names(initial_slope_plot_ids) <- initial_slope_plot_ids
 initial_slope_fits <- lapply(initial_slope_plot_ids, function(x) initial_slope_model(initial_data,x))
 initial_slope_fits <- rbindlist(initial_slope_fits)
 
-initial_data <- filter(NPQdata, cumulative_time == 40) #do this for later to use in final dataset of parms
+initial_data <- filter(NPQdata, cumulative_time == 40)
 initial_data <- select(initial_data, plot_id, Plot, Repeat)
 
 #maximum amplitude NPQ----
@@ -111,7 +191,20 @@ names(end_point)[3] <- "end_FvFm"
 # phi PSII in the dark parameters----
 
 names(NPQdata)[5] <- "FvFm_values"
+# 
 relaxation_data <- filter(NPQdata, cumulative_time >= 600)
+# 
+# test <- relaxation_data[1:9,]
+# 
+# PSII_model <- nlsLM(FvFm_values ~ f*(1-exp(-g*time_post_light_off)) + h,data=test, start = list(f=0.25,g=0.002,h=0.6))
+# f_fit <- PSII_model$m$getAllPars()[1]
+# g_fit <- PSII_model$m$getAllPars()[2]
+# h_fit <- PSII_model$m$getAllPars()[3]
+# 
+# plot(test$time_post_light_off, test$FvFm_values)
+# x <- seq(0,720,by=5)
+# y <- predict(PSII_model, list(time_post_light_off=x))
+# points(x,y, type="l")
 
 #uses relaxation_data ----
 
@@ -153,13 +246,22 @@ NPQ_parms <- merge(NPQ_parms, end_point, by="plot_id")
 
 #tidy data based on confint for induction parameters? ----
 
-# ggplot(NPQ_parms, aes(x=plot_id, y=a_confint)) + geom_point() 
-# ggplot(NPQ_parms, aes(x=factor(0), y=a_confint)) + geom_boxplot()
-# ggplot(NPQ_parms, aes(x=a_confint)) + geom_density() #geom_vline(aes(xintercept=2)) #suggest the cut off is 2 for a! 
-# 
-# ggplot(NPQ_parms, aes(x=plot_id, y=b_confint)) + geom_point() 
-# ggplot(NPQ_parms, aes(x=factor(0), y=b_confint)) + geom_boxplot() # suggest cut off is 0.01 for b!
-# ggplot(NPQ_parms, aes(x=b_confint)) + geom_density() #geom_vline(aes(xintercept=0.01)) #suggest the cut off is 0.01 for b!
+ggplot(NPQ_parms, aes(x=plot_id, y=a_confint)) + geom_point() 
+ggplot(NPQ_parms, aes(x=factor(0), y=a_confint)) + geom_boxplot()
+ggplot(NPQ_parms, aes(x=a_confint)) + geom_density() #geom_vline(aes(xintercept=2)) #suggest the cut off is 2 for a! 
+
+ggplot(NPQ_parms, aes(x=plot_id, y=b_confint)) + geom_point() 
+ggplot(NPQ_parms, aes(x=factor(0), y=b_confint)) + geom_boxplot() # suggest cut off is 0.01 for b!
+ggplot(NPQ_parms, aes(x=b_confint)) + geom_density() #geom_vline(aes(xintercept=0.01)) #suggest the cut off is 0.01 for b!
+
+NPQ_parms <- filter(NPQ_parms, a_confint <= 2)
+NPQ_parms <- filter(NPQ_parms, b_confint <= 0.01)
+
+#visualise! ----
+
+ggplot(NPQ_parms, aes(x=e_fit, y=end_NPQ)) + geom_point() # should be y=x ish as e_fit is estimating the end point essentially
+ggplot(NPQ_parms, aes(x=a_fit, y=max_amp)) + geom_point() # should be fairly positive correlation
+ggplot(NPQ_parms, aes(x=b_fit, y=gradient)) + geom_point() # should be fairly positive correlation
 
 #final dataset ----
 
@@ -173,6 +275,4 @@ names(genotype_data)[1] <- "Plot"
 
 NPQ_parms <- merge(NPQ_parms, genotype_data, by = "Plot")
 
-NPQ_parms <- NPQ_parms[,c(19,18,1,2,15,16,3:14)]
-
-write_xlsx(NPQ_parms, "~/OneDrive - University of Cambridge/MPhil/GitLink/Final Scripts Output/NPQ_parms.xlsx")
+write_xlsx(NPQ_parms, "~/OneDrive - University of Cambridge/MPhil/GitLink/ExportedData/NPQparms.xlsx")

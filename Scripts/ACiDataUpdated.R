@@ -63,3 +63,5 @@ names(ACiDATA)[7] <- "Repeat"
 names(ACiDATA)[177] <- "Rep"
 
 write_xlsx(ACiDATA,"~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/LICOR 6800 files/GenotypeACiDATA.xlsx")
+
+write_xlsx(ACiDATA,"~/OneDrive - University of Cambridge/MPhil/GitLink/Final Scripts Output/ACi_data.xlsx")
