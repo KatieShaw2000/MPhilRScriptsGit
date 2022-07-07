@@ -31,6 +31,9 @@ names(multispec)[3] <- "Location"
 
 multispec$combined <- rowMeans(multispec[,c(5,6)])
 
+ggplot(multispec, aes(x=PhiPSII_20th)) + geom_density()
+ggplot(multispec, aes(x=PhiPSII_30th)) + geom_density()
+
 #Export data ----
 
 write.csv(multispec, "All Parameters/multispec.csv")
@@ -61,19 +64,15 @@ phipsii_plot2 <- ggplot(order_basic, aes(x=Treatment, y=combined, color = Treatm
 
 ggarrange(phipsii_plot1, phipsii_plot2, ncol = 2, labels = c("A", "B"))
 
-phipsii_two_way <- aov(combined ~ Location + Treatment, data = multispec)
-phipsii_interaction <- aov(combined ~ Location + Treatment + Location*Treatment, data = multispec)
-phipsii_nested <- aov(combined ~ Location/Genotype + Treatment, data = multispec)
-phipsii_interaction_nested <- aov(combined ~ Location/Genotype + Treatment + Treatment*Location, data = multispec)
+phipsii_interaction <- aov(combined ~ Location*Treatment, data = multispec)
 
-phipsii_models <- list(phipsii_two_way, phipsii_interaction, phipsii_nested, phipsii_interaction_nested)
-phipsii_models_names <- c("two_way", "interaction", "nested", "both")
+shapiro.test(residuals(lm(combined ~ Location*Treatment, data=multispec)))
 
-aictab(phipsii_models, modnames = phipsii_models_names)
+ggplot(multispec, aes(x=combined)) + geom_density()
 
-plot(phipsii_interaction_nested)
+plot(phipsii_interaction)
 
-summary(phipsii_interaction_nested)
+summary(phipsii_interaction)
 
 mean_phipsii_desert_40 <- mean(multispec[multispec$Location == "Desert" & multispec$Treatment == "40",]$combined)
 mean_phipsii_desert_80 <- mean(multispec[multispec$Location == "Desert" & multispec$Treatment == "80",]$combined)

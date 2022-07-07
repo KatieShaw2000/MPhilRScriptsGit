@@ -111,18 +111,15 @@ asat_plot2 <- ggplot(order_basic, aes(x=Treatment, y=asat, color = Treatment)) +
 
 ggarrange(asat_plot1, asat_plot2, ncol = 2, labels = c("A", "B"))
 
-asat_two_way <- aov(asat ~ Location + Treatment, data = parms)
+
 asat_interaction <- aov(asat ~ Treatment*Location, data = parms)
-asat_nested <- aov(asat ~ Location/Genotype + Treatment, data = parms)
 
-asat_models <- list(asat_two_way, asat_interaction, asat_nested)
-asat_models_names <- c("two_way","interaction", "nested")
+shapiro.test(residuals(lm(asat~Location + Treatment, data=parms)))
 
-aictab(asat_models, modnames = asat_models_names)
+plot(asat_interaction) 
 
-summary(asat_nested)
+summary(asat_interaction)
 
-plot(asat_nested) #look at diagnostic plots- they look okay
 
 mean_asat_desert_40 <- mean(parms[parms$Location == "Desert" & parms$Treatment == "40",]$asat)
 mean_asat_desert_80 <- mean(parms[parms$Location == "Desert" & parms$Treatment == "80",]$asat)
@@ -144,16 +141,14 @@ vcmax_plot2 <- ggplot(order_basic, aes(x=Treatment, y=Vcmax, color = Treatment))
 
 ggarrange(vcmax_plot1, vcmax_plot2, ncol = 2, labels = c("A", "B"))
 
-vcmax_two_way <- aov(Vcmax ~ Location + Treatment, data = parms)
-vcmax_nested <- aov(Vcmax ~ Location/Genotype + Treatment, data = parms)
 vcmax_interaction <- aov(Vcmax ~ Location*Treatment, data = parms)
 
-vcmax_models <- list(vcmax_two_way, vcmax_nested)
-vcmax_models_names <- c("two_way", "nested")
+shapiro.test(residuals(lm(Vcmax~Location*Treatment, data=parms)))
 
-aictab(vcmax_models, modnames = vcmax_models_names)
+plot(vcmax_interaction)
 
-plot(vcmax_two_way)
+summary(vcmax_interaction)
+
 
 mean_vcmax_desert_40 <- mean(parms[parms$Location == "Desert" & parms$Treatment == "40",]$Vcmax)
 mean_vcmax_desert_80 <- mean(parms[parms$Location == "Desert" & parms$Treatment == "80",]$Vcmax)
@@ -178,16 +173,15 @@ jmax_plot2 <- ggplot(order_basic, aes(x=Treatment, y=Jmax, color = Treatment)) +
 
 ggarrange(jmax_plot1, jmax_plot2, ncol = 2, labels = c("A", "B"))
 
-jmax_two_way <- aov(Jmax ~ Location + Treatment, data = parms)
-jmax_nested <- aov(Jmax ~ Location/Genotype + Treatment, data = parms)
 jmax_interaction <- aov(Jmax ~ Location*Treatment, data = parms)
 
-jmax_models <- list(jmax_two_way, jmax_nested)
-jmax_models_names <- c("two_way", "nested")
+shapiro.test(residuals(lm(Jmax~Location *Treatment, data=parms)))
 
-aictab(jmax_models, modnames = jmax_models_names)
+plot(jmax_interaction)
 
-plot(jmax_two_way)
+summary(jmax_interaction)
+
+
 
 mean_jmax_desert_40 <- mean(parms[parms$Location == "Desert" & parms$Treatment == "40",]$Jmax)
 mean_jmax_desert_80 <- mean(parms[parms$Location == "Desert" & parms$Treatment == "80",]$Jmax)
@@ -216,22 +210,17 @@ order_basic2 <- within(parms_not_headed, Location <- factor(Location, levels = c
 
 #trying asat without headed plants ---- 
 
-asat_two_way2 <- aov(asat ~ Location + Treatment, data = parms_not_headed)
-asat_nested2 <- aov(asat ~ Location/Genotype + Treatment, data = parms_not_headed)
 asat_interaction2 <- aov(asat ~ Location*Treatment, data = parms_not_headed)
+
+shapiro.test(residuals(lm(asat~Location * Treatment, data=parms_not_headed)))
+shapiro.test(residuals(lm(Jmax~Location * Treatment, data=parms_not_headed)))
+shapiro.test(residuals(lm(Vcmax~Location * Treatment, data=parms_not_headed)))
 
 #trying vcmax without headed plants ---- 
 
-vcmax_two_way2 <- aov(Vcmax ~ Location + Treatment, data = parms_not_headed)
 vcmax_interaction2 <- aov(Vcmax ~ Location + Treatment + Location*Treatment, data = parms_not_headed)
-vcmax_nested2 <- aov(Vcmax ~ Location/Genotype + Treatment, data = parms_not_headed)
 
-vcmax_models2 <- list(vcmax_two_way2, vcmax_interaction2, vcmax_nested2)
-vcmax_models_names2 <- c("two_way", "interaction", "nested")
-
-aictab(vcmax_models2, modnames = vcmax_models_names2)
-
-summary(vcmax_two_way2)
+summary(vcmax_interaction2)
 
 vcmax_plot3 <- ggplot(order_parms2, aes(x=Treatment, y=Vcmax, color=Treatment)) + geom_boxplot() +
   facet_wrap(~Genotype + Location, ncol=4)+
@@ -248,11 +237,9 @@ ggarrange(vcmax_plot3, vcmax_plot4, ncol = 2, labels = c("A", "B"))
 
 #trying jmax without headed plants ---- 
 
-jmax_two_way2 <- aov(Jmax ~ Location + Treatment, data = parms_not_headed)
 jmax_interaction2 <- aov(Jmax ~ Location + Treatment + Location*Treatment, data = parms_not_headed)
-jmax_nested2 <- aov(Jmax ~ Location/Genotype + Treatment, data = parms_not_headed)
 
-summary(jmax_two_way2)
+summary(jmax_interaction2)
 
 jmax_plot3 <- ggplot(order_parms2, aes(x=Treatment, y=Jmax, color=Treatment)) + geom_boxplot() +
   facet_wrap(~Genotype + Location, ncol=4)+
@@ -282,13 +269,10 @@ gs_plot2 <- ggplot(order_basic, aes(x=Treatment, y=gs, color = Treatment)) + geo
 
 ggarrange(gs_plot1, gs_plot2, ncol = 2, labels = c("A", "B"))
 
-gs_two_way <- aov(gs ~ Location + Treatment, data = parms)
+
 gs_interaction <- aov(gs ~ Treatment + Location*Treatment, data = parms)
-gs_nested <- aov(gs ~ Location/Genotype + Treatment, data = parms)
 
-gs_models <- list(gs_two_way, gs_interaction)
-
-aictab(gs_models,modnames = c("two_way", "interaction"))
+shapiro.test(residuals(lm(gs~Location*Treatment, data=parms)))
 
 summary(gs_interaction)
 
@@ -312,17 +296,15 @@ iwue_plot2 <- ggplot(order_basic, aes(x=Treatment, y=iWUE, color = Treatment)) +
 
 ggarrange(iwue_plot1, iwue_plot2, ncol = 2, labels = c("A", "B"))
 
-iwue_two_way <- aov(iWUE ~ Location + Treatment, data = parms)
+
 iwue_interaction <- aov(iWUE ~ Treatment + Treatment*Location, data = parms)
-iwue_nested <- aov(iWUE ~ Location/Genotype + Treatment, data = parms)
-iwue_both <- aov(iWUE ~ Location/Genotype + Treatment + Treatment*Location, data = parms)
+shapiro.test(residuals(lm(iWUE~Location*Treatment, data=parms)))
 
-iwue_models <- list(iwue_two_way, iwue_nested, iwue_interaction)
-iwue_names <- c("two_way", "nested", "interaction")
-
-aictab(iwue_models, modnames = iwue_names)
+log_iwue_interaction <- aov(log10(iWUE) ~ Treatment + Treatment*Location, data = parms)
+shapiro.test(residuals(lm(log10(iWUE)~Location*Treatment, data=parms)))
 
 summary(iwue_interaction)
+summary(log_iwue_interaction)
 
 mean_iwue_desert_40 <- mean(parms[parms$Location == "Desert" & parms$Treatment == "40",]$iWUE)
 mean_iwue_desert_80 <- mean(parms[parms$Location == "Desert" & parms$Treatment == "80",]$iWUE)
@@ -344,11 +326,16 @@ sl_plot2 <- ggplot(order_basic, aes(x=Treatment, y=sl, color = Treatment)) + geo
 
 ggarrange(sl_plot1, sl_plot2, ncol = 2, labels = c("A", "B"))
 
-sl_two_way <- aov(sl ~ Location + Treatment, data = parms)
-sl_nested <- aov(sl ~ Location/Genotype + Treatment, data = parms)
+
 sl_interaction <- aov(sl ~ Location*Treatment + Treatment, data = parms)
 
-summary(sl_two_way)
+shapiro.test(residuals(lm(sl~Location*Treatment, data=parms)))
+
+plot(sl_interaction)
+
+parms <- parms[-c(2,22,71),]
+
+summary(sl_interaction)
 
 mean_sl_desert_40 <- mean(parms[parms$Location == "Desert" & parms$Treatment == "40",]$sl, na.rm = TRUE)
 mean_sl_desert_80 <- mean(parms[parms$Location == "Desert" & parms$Treatment == "80",]$sl, na.rm = TRUE)

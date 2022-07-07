@@ -27,11 +27,11 @@ summary(heading_date)
 
 #Get some numbers and plots ----
 
-heading_date <- na.omit(heading_date)
-
 heading_date$Treatment <- as.factor(heading_date$Treatment)
 heading_date$`Location Type` <- as.factor(heading_date$`Location Type`)
 heading_date$Genotype <- as.factor(heading_date$Genotype)
+
+heading_date <- na.omit(heading_date)
 
 names(heading_date)[3] <- "Location"
 

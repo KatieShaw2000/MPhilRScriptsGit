@@ -9,6 +9,7 @@ library(readxl)
 library(dplyr)
 library(reshape2)
 library(AICcmodavg)
+library(ggpubr)
 
 #Get data ----
 
@@ -172,14 +173,14 @@ mean_total_desert_80 <- mean(final_water_data[final_water_data$Location == "Dese
 mean_total_coast_40 <- mean(final_water_data[final_water_data$Location == "Coastal" & final_water_data$Treatment == "40",]$total_water_use)
 mean_total_coast_80 <- mean(final_water_data[final_water_data$Location == "Coastal" & final_water_data$Treatment == "80",]$total_water_use)
 
-total_two_way <- aov(total_water_use ~ Location + Treatment, data = final_water_data)
-total_nested <- aov(total_water_use ~ Location/Genotype + Treatment, data = final_water_data)
+
 total_interaction <- aov(total_water_use ~ Location * Treatment, data = final_water_data)
 
-total_models <- list(total_two_way, total_nested)
-total_models_names <- c("two_way", "nested")
+shapiro.test(residuals(lm(log10(total_water_use)~Location*Treatment, data=final_water_data)))
 
-aictab(total_models, modnames = total_models_names)
+plot(total_interaction)
+
+summary(total_interaction)
 
 #get the biomass data for normalising and average final 3 days of data ----
 
@@ -191,6 +192,10 @@ mass <- mass[,c(1,5)]
 mass_water <- merge(final_water_data, mass, by = "Number")
 
 mass_water$normalised <- mass_water$final_average/mass_water$`Dried mass`
+
+mass_water$WUE <- mass_water$`Dried mass`/mass_water$final_average
+
+mass_water$life_WUE <- mass_water$`Dried mass`/mass_water$total_water_use
 
 #do some plots for normalised water use ----
 
@@ -218,23 +223,38 @@ norm_plot2 <- ggplot(order_basic_mass_water, aes(x=Treatment, y=normalised, colo
 
 ggarrange(norm_plot1, norm_plot2, ncol = 2, labels = c("A", "B"))
 
+WUE_plot1 <- ggplot(order_mass_water, aes(x=Treatment, y=WUE, color=Treatment)) + geom_boxplot() +
+  facet_wrap(~Genotype + Location, ncol=4)+
+  theme(legend.position = "none") +
+  ylab(expression(paste("WUE (g"," ml"^"-1",")"))) +
+  scale_color_manual(values=c("red","blue")) 
+
+WUE_plot2 <- ggplot(order_basic_mass_water, aes(x=Treatment, y=WUE, color = Treatment)) + geom_boxplot() +
+  facet_wrap(~Location) + 
+  ylab(expression(paste("WUE (g"," ml"^"-1",")"))) +
+  scale_color_manual(values=c("red","blue"))
+
+ggarrange(WUE_plot1, WUE_plot2, ncol = 2, labels = c("A", "B"))
+
+WUE_interaction <- aov(WUE ~ Location * Treatment, data = mass_water)
+
+shapiro.test(residuals(lm(WUE~Location*Treatment, data=mass_water)))
+
+summary(WUE_interaction)
+
 mean_normalised_desert_40 <- mean(mass_water[mass_water$Location == "Desert" & mass_water$Treatment == "40",]$normalised)
 mean_normalised_desert_80 <- mean(mass_water[mass_water$Location == "Desert" & mass_water$Treatment == "80",]$normalised)
 mean_normalised_coast_40 <- mean(mass_water[mass_water$Location == "Coastal" & mass_water$Treatment == "40",]$normalised)
 mean_normalised_coast_80 <- mean(mass_water[mass_water$Location == "Coastal" & mass_water$Treatment == "80",]$normalised)
 
-norm_two_way <- aov(normalised ~ Location + Treatment, data = mass_water)
+
 norm_interaction <- aov(normalised ~ Location + Treatment + Location * Treatment, data = mass_water)
-norm_nested <- aov(normalised ~ Location/Genotype + Treatment, data = mass_water)
 
-norm_models <- list(norm_two_way, norm_nested)
-norm_models_names <- c("two_way", "nested")  
+shapiro.test(residuals(lm(normalised~Location*Treatment, data=mass_water)))
 
-aictab(norm_models, modnames = norm_models_names)
+plot(norm_interaction)
 
-summary(norm_nested)
-
-plot(norm_nested)
+summary(norm_interaction)
 
 #export data ----
 

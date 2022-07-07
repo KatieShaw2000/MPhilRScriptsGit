@@ -70,17 +70,15 @@ ggarrange(SLA_plot1, SLA_plot2, ncol = 2, labels = c("A", "B"))
 
 #some stats tests----
 
-SLA_two_way <- aov(SLA ~ Location + Treatment, data = SLA)
 SLA_interaction <- aov(SLA ~ Location * Treatment, data = SLA)
-SLA_nested <- aov(SLA ~ Location/Genotype + Treatment, data = SLA)
-SLA_nested_interaction <- aov(SLA ~ Location/Genotype + Treatment + Location*Treatment, data=SLA)
 
-SLA_models <- list(SLA_two_way, SLA_interaction, SLA_nested, SLA_nested_interaction)
-SLA_models_names <- c("two_way", "interaction", "nested", "both")
+shapiro.test(residuals(lm(SLA ~ Location * Treatment, data = SLA))) #normally distributed
 
-aictab(SLA_models, modnames = SLA_models_names)
+plot(SLA_interaction) #look at diagnostic plots- they look okay
 
-plot(SLA_nested) #look at diagnostic plots- they look okay
+summary(SLA_interaction) #report this result 
+
+SLA_nested <- aov(SLA ~ Location/Genotype + Location * Treatment, data = SLA)
 
 mean_SLA_desert_40 <- mean(SLA[SLA$Location == "Desert" & SLA$Treatment == "40",]$SLA)
 mean_SLA_desert_80 <- mean(SLA[SLA$Location == "Desert" & SLA$Treatment == "80",]$SLA)

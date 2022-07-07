@@ -56,8 +56,9 @@ mean_gs_Alow <- ddply(after_drop, .(Plot, Repeat), summarise, mean_gs_Alow = mea
 #add in information needed for BLUEs ----
 
 fielddesign <- read_xlsx("~/OneDrive - University of Cambridge/MPhil/Phenotyping Campaign/FieldDesign.xlsx")
-names(fielddesign)[1] <- "Genotype"
 fielddesign <- fielddesign[,c(6,1,2,3,5)]
+names(fielddesign)[1] <- "Genotype"
+names(fielddesign)[2] <- "Plot"
 
 other_info <- select(ACi_6400, "Date", "Start_Hour", "CAP", "Plot", "Repeat")
 other_info <- unique(other_info) #remove duplicates

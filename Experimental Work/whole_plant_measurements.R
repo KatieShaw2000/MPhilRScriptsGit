@@ -62,42 +62,54 @@ area_plot2 <- ggplot(order_basic, aes(x=Treatment, y=`Total leaf area`, color=Tr
 
 ggarrange(area_plot1, area_plot2, ncol = 2, labels = c("A", "B"))
 
-#Do stats tests for dried mass ----
-
-mass_two_way <- aov(`Dried mass` ~ Location + Treatment, data = combined) 
-mass_interaction <- aov(`Dried mass` ~ Location * Treatment, data = combined)
-mass_nested <- aov(`Dried mass` ~ Location/Genotype + Treatment, data = combined)
-
-mass_models <- list(mass_two_way, mass_nested)
-mass_models_names <- c("two_way", "nested")
-
-aictab(mass_models, modnames = mass_models_names)
-
-plot(mass_nested)
-
-mean_mass_desert_40 <- mean(combined[combined$Location == "Desert" & combined$Treatment == "40",]$`Dried mass`)
-mean_mass_desert_80 <- mean(combined[combined$Location == "Desert" & combined$Treatment == "80",]$`Dried mass`)
-mean_mass_coast_40 <- mean(combined[combined$Location == "Coastal" & combined$Treatment == "40",]$`Dried mass`)
-mean_mass_coast_80 <- mean(combined[combined$Location == "Coastal" & combined$Treatment == "80",]$`Dried mass`)
-
 #Do stats tests for total leaf area ---
 
-area_two_way <- aov(`Total leaf area` ~ Location + Treatment, data = combined)
-area_interaction <- aov(`Total leaf area` ~ Location + Treatment + Location*Treatment, data = combined)
-area_nested <- aov(`Total leaf area` ~ Location/Genotype + Treatment, data = combined)
-area_interaction_nested <- aov(`Total leaf area` ~ Location/Genotype + Treatment + Location*Treatment, data = combined)
+area_interaction <- aov(`Total leaf area` ~ Location*Treatment, data = combined)
 
-area_models <- list(area_two_way, area_interaction, area_nested, area_interaction_nested)
-area_models_names <- c("two way", "interaction", "nested", "both")
+shapiro.test(residuals(lm(`Total leaf area` ~ Location*Treatment, data = combined)))
 
-aictab(area_models, modnames = area_models_names)
+plot(area_interaction)
 
-plot(area_interaction_nested)
+summary(area_interaction)
 
 mean_area_desert_40 <- mean(combined[combined$Location == "Desert" & combined$Treatment == "40",]$`Total leaf area`)
 mean_area_desert_80 <- mean(combined[combined$Location == "Desert" & combined$Treatment == "80",]$`Total leaf area`)
 mean_area_coast_40 <- mean(combined[combined$Location == "Coastal" & combined$Treatment == "40",]$`Total leaf area`)
 mean_area_coast_80 <- mean(combined[combined$Location == "Coastal" & combined$Treatment == "80",]$`Total leaf area`)
 
+#Do stats tests for dried mass ----
+
+mass_interaction <- aov(`Dried mass` ~ Location * Treatment, data = combined)
+
+shapiro.test(residuals(lm(`Dried mass` ~ Location * Treatment, data = combined)))
+
+plot(mass_interaction)
+
+#remove points 94, 105 and 26 as these are highlighted on the normal Q-Q plot
+
+combined <- combined[-c(26,94,105),]
+
+mass_interaction <- aov(`Dried mass` ~ Location * Treatment, data = combined)
+
+shapiro.test(residuals(lm(`Dried mass` ~ Location * Treatment, data = combined)))
+
+plot(mass_interaction)
+
+#remove 19, 25 and 29
+
+combined <- combined[-c(19, 25, 29),]
+
+mass_interaction <- aov(`Dried mass` ~ Location * Treatment, data = combined)
+
+shapiro.test(residuals(lm(`Dried mass` ~ Location * Treatment, data = combined)))
+
+plot(mass_interaction)
+
+summary(mass_interaction)
+
+mean_mass_desert_40 <- mean(combined[combined$Location == "Desert" & combined$Treatment == "40",]$`Dried mass`)
+mean_mass_desert_80 <- mean(combined[combined$Location == "Desert" & combined$Treatment == "80",]$`Dried mass`)
+mean_mass_coast_40 <- mean(combined[combined$Location == "Coastal" & combined$Treatment == "40",]$`Dried mass`)
+mean_mass_coast_80 <- mean(combined[combined$Location == "Coastal" & combined$Treatment == "80",]$`Dried mass`)
 
 

@@ -39,12 +39,17 @@ aci_parms <- aci_parms[,-1]
 names(aci_parms)[1] <- "Number"
 aci_parms <- aci_parms[,c(1, 5:11)]
 
+isotope <- read.csv("Isotope.csv")
+isotope <- isotope[,-1]
+isotope <- isotope[,c(1,8,9,10)]
+
 #merge data ----
 
 all_parms <- merge(SLA, whole_plant, by = "Number")
 all_parms <- merge(all_parms, multispec, by = "Number")
 all_parms <- merge(all_parms, water_use, by = "Number")                   
 all_parms <- merge(all_parms, aci_parms, by = "Number")
+all_parms <- merge(all_parms, isotope, by = "Number")
 
 names(all_parms)[6] <- "Dried Biomass"
 names(all_parms)[7] <- "Leaf Area"
@@ -52,7 +57,7 @@ names(all_parms)[8] <- "PhiPSII"
 names(all_parms)[9] <- "Total Water Use"
 names(all_parms)[10] <- "Normalised Water Use"
 
-all_parms <- all_parms[,c(1:8,11,14,16,17,9,10,12,13,15)]
+all_parms <- all_parms[,c(1:8,11,14,16,17,9,10,12,13,15,18,19,20)]
 
 #correlation plot - do one for 40% and one for 80% for each location type? ----
 
@@ -66,10 +71,25 @@ coast_40 <- subset(all_parms, Location == "Coastal" & Treatment == "40")
 
 coast_80 <- subset(all_parms, Location == "Coastal" & Treatment == "80")
 
-corrplot(cor(desert_40[,5:17]), type = "upper", diag = FALSE, method = "color",)
-corrplot(cor(desert_80[,5:17]), type = "upper", diag = FALSE, method = "color")
-corrplot(cor(coast_40[,5:17]), type = "upper", diag = FALSE, method = "color")
-corrplot(cor(coast_80[,5:17]), type = "upper", diag = FALSE, method = "color")
+corrplot(cor(desert_40[,5:20]), type = "upper", diag = FALSE, method = "color",)
+corrplot(cor(desert_80[,5:20]), type = "upper", diag = FALSE, method = "color")
+corrplot(cor(coast_40[,5:20]), type = "upper", diag = FALSE, method = "color")
+corrplot(cor(coast_80[,5:20]), type = "upper", diag = FALSE, method = "color")
+
+for_cor <- na.omit(all_parms)
+for_cor_40 <- subset(for_cor, Treatment == "40")
+for_cor_80 <- subset(for_cor, Treatment == "80")
+
+corrplot(cor(for_cor_40[,5:20]), type = "upper", diag = FALSE, method = "color")
+corrplot(cor(for_cor_80[,5:20]), type = "upper", diag = FALSE, method = "color")
+
+desert <- subset(all_parms, Location == "Desert")
+coast <- subset(all_parms, Location == "Coastal") 
+desert <- na.omit(desert)
+coast <- na.omit(coast)          
+
+corrplot(cor(desert[,5:20]), type = "upper", diag = FALSE, method = "color")
+corrplot(cor(coast[,5:20]), type = "upper", diag = FALSE, method = "color")
+corrplot(cor(for_cor[,5:20]), type = "upper", diag = FALSE, method = "color")
 
 
-          
