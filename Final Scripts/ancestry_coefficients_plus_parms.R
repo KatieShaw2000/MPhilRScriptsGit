@@ -49,9 +49,9 @@ dunn.test(combined$days_to_heading, combined$location_type, altp = TRUE)
 
 hd <- ggplot(combined, aes(x=location_type, y=days_to_heading, color=location_type)) + geom_boxplot() +
   ylab("Days to Heading") + 
-  guides(color = guide_legend(title = "Location Type")) +
+  xlab("Ancestral Group") +
+  guides(color = guide_legend(title = "Ancestral Group")) +
   theme(legend.position = c(0.18,0.13)) +
-  xlab("Location Type") + 
   scale_color_manual(values=c("red","blue", "green4", "darkorange")) +
   geom_signif(comparisons = list(c("North", "Eastern desert"),
                                  c("Coast", "Eastern desert"),
@@ -73,15 +73,15 @@ summary(aov_SLA)
 TukeyHSD(aov_SLA)
 
 SLA <- ggplot(combined, aes(x=location_type, y=SLA, color=location_type)) + geom_boxplot() +
-  ylab(expression(paste("SLA (cm"^"2","g"^"-1",")"))) +
+  ylab(expression(paste("SLA (m"^"2","g"^"-1",")"))) +
   theme(legend.position = "none") +
-  xlab("Location Type") +
+  xlab("Ancestral Group") +
   scale_color_manual(values=c("red","blue", "green4", "darkorange")) +
   geom_signif(comparisons = list(c("North", "Eastern desert"),
                                  c("Coast", "Eastern desert"),
                                  c("Eastern desert", "Southern desert")),
               map_signif_level = TRUE,
-              y_position = c(310,304,298), color = "black")
+              y_position = c(0.031,0.0304,0.0298), color = "black")
 
 #plot for SLA and heading date ----
 
@@ -108,7 +108,7 @@ TukeyHSD(aov_a)
 a <- ggplot(combined, aes(x=location_type, y=a_fit, color=location_type)) + geom_boxplot(lwd=1) +
   ylab("a_induction") +
   theme(legend.position = "none") +
-  xlab("Location Type") +
+  xlab("Ancestral Group") +
   theme(axis.title = element_text(size=15), axis.text = element_text(size=12)) +
   scale_color_manual(values=c("red","blue", "green4", "darkorange")) +
   geom_signif(comparisons = list(c("Coast", "Eastern desert")),
@@ -121,10 +121,10 @@ bartlett.test(b_fit ~ location_type, data=combined) #not equal variance
 kruskal.test(b_fit ~ location_type, data = combined) #no significant difference 
 
 b <- ggplot(combined, aes(x=location_type, y=b_fit, color=location_type)) + geom_boxplot(lwd=1) +
-  ylab("b_induction") +
+  ylab(expression(paste("b_induction (s"^"-1",")"))) +
   theme(legend.position = "none") +
   theme(axis.title = element_text(size=15), axis.text = element_text(size=12)) +
-  xlab("Location Type") +
+  xlab("Ancestral Group") +
   scale_color_manual(values=c("red","blue", "green4", "darkorange")) 
 
 lm_max_amp <- lm(max_amp ~ location_type, data = combined)
@@ -137,9 +137,9 @@ TukeyHSD(aov_max_amp)
 
 max_amp <- ggplot(combined, aes(x=location_type, y=max_amp, color=location_type)) + geom_boxplot(lwd=1) +
   ylab("Maximum NPQ Amplitude") +
-  guides(color = guide_legend(title = "Location Type")) +
+  guides(color = guide_legend(title = "Ancestral Group")) +
   theme(legend.position = c(0.87,0.93)) +
-  xlab("Location Type") +
+  xlab("Ancestral Group") +
   theme(axis.title = element_text(size=15), axis.text = element_text(size=12)) +
   scale_color_manual(values=c("red","blue", "green4", "darkorange")) +
   geom_signif(comparisons = list(c("North", "Eastern desert"),
@@ -162,7 +162,7 @@ TukeyHSD(aov_c)
 c <- ggplot(combined, aes(x=location_type, y=c_fit, color=location_type)) + geom_boxplot(lwd=1) +
   ylab("a_relaxation") +
   theme(legend.position = "none") +
-  xlab("Location Type") +
+  xlab("Ancestral Group") +
   theme(axis.title = element_text(size=15), axis.text = element_text(size=12)) +
   scale_color_manual(values=c("red","blue", "green4", "darkorange")) +
   geom_signif(comparisons = list(c("North", "Eastern desert"),
@@ -179,9 +179,9 @@ kruskal.test(d_fit ~ location_type, data = combined) #significant difference
 dunn.test(combined$d_fit, combined$location_type, altp = TRUE)
 
 d <- ggplot(combined, aes(x=location_type, y=d_fit, color=location_type)) + geom_boxplot(lwd=1) +
-  ylab("b_relaxation") +
+  ylab(expression(paste("b_relaxation (s"^"-1",")"))) +
   theme(legend.position = "none") +
-  xlab("Location Type") +
+  xlab("Ancestral Group") +
   theme(axis.title = element_text(size=15), axis.text = element_text(size=12)) +
   scale_color_manual(values=c("red","blue", "green4", "darkorange")) +
   geom_signif(comparisons = list(c("North", "Eastern desert"),
@@ -198,9 +198,9 @@ kruskal.test(e_fit ~ location_type, data = combined) #no significant difference
 
 e <- ggplot(combined, aes(x=location_type, y=e_fit, color=location_type)) + geom_boxplot(lwd=1) +
   ylab("c_relaxation") +
-  guides(color = guide_legend(title = "Location Type")) +
+  guides(color = guide_legend(title = "Ancestral Group")) +
   theme(legend.position = c(0.09,0.845)) +
-  xlab("Location Type") +
+  xlab("Ancestral Group") +
   theme(axis.title = element_text(size=15), axis.text = element_text(size=12)) +
   scale_color_manual(values=c("red","blue", "green4", "darkorange")) 
 
@@ -214,7 +214,7 @@ summary(aov_end_NPQ) #no significant difference
 end_NPQ <- ggplot(combined, aes(x=location_type, y=end_NPQ, color=location_type)) + geom_boxplot(lwd=1) +
   ylab("End NPQ") +
   theme(legend.position = "none") +
-  xlab("Location Type") +
+  xlab("Ancestral Group") +
   theme(axis.title = element_text(size=15), axis.text = element_text(size=12)) +
   scale_color_manual(values=c("red","blue", "green4", "darkorange")) 
 
@@ -242,7 +242,7 @@ TukeyHSD(aov_gs)
 gs <- ggplot(aci_parms, aes(x=location_type, y=gs, color=location_type)) + geom_boxplot(lwd=1) +
   ylab(expression(paste("gs (",mol,~ m^2, s^-1,")"))) +
   theme(legend.position = "none") +
-  xlab("Location Type") +
+  xlab("Ancestral Group") +
   theme(axis.title = element_text(size=15), axis.text = element_text(size=12)) +
   scale_color_manual(values=c("red","blue", "green4")) +
   geom_signif(comparisons = list(c("North", "Eastern desert")),
@@ -259,9 +259,9 @@ summary(aov_iwue) #significant difference
 TukeyHSD(aov_iwue)
 
 iWUE <- ggplot(aci_parms, aes(x=location_type, y=iWUE, color=location_type)) + geom_boxplot(lwd=1) +
-  ylab(expression(paste("iWUE (", mu, "mol ", "mol",~ m^2, s^-1,")"))) +
   theme(legend.position = "none") +
-  xlab("Location Type") +
+  ylab(expression(paste("iWUE (", mu, "mol ", "mol"^"-1",")"))) +
+  xlab("Ancestral Group") +
   theme(axis.title = element_text(size=15), axis.text = element_text(size=12)) +
   scale_color_manual(values=c("red","blue", "green4")) +
   geom_signif(comparisons = list(c("North", "Eastern desert")),
@@ -277,9 +277,9 @@ summary(aov_sl) #no significant difference
 
 sl <- ggplot(aci_parms, aes(x=location_type, y=sl, color=location_type)) + geom_boxplot(lwd=1) +
   ylab("sl") +
-  guides(color = guide_legend(title = "Location Type")) +
+  guides(color = guide_legend(title = "Ancestral Group")) +
   theme(legend.position = c(0.87,0.07)) +
-  xlab("Location Type") +
+  xlab("Ancestral Group") +
   theme(axis.title = element_text(size=15), axis.text = element_text(size=12)) +
   scale_color_manual(values=c("red","blue", "green4", "darkorange")) 
 
@@ -295,9 +295,9 @@ aov_asat <- aov(asat ~ location_type, data = aci_parms)
 summary(aov_asat) #no significant difference
 
 asat <- ggplot(aci_parms, aes(x=location_type, asat, color=location_type)) + geom_boxplot(lwd=1) +
-  ylab(expression(paste("asat (",mu, "mol",~ m^2, s^-1,")"))) +
+  ylab(expression(paste("Asat (",mu, "mol",~ m^2, s^-1,")"))) +
   theme(legend.position = "none") +
-  xlab("Location Type") +
+  xlab("Ancestral Group") +
   theme(axis.title = element_text(size=15), axis.text = element_text(size=12)) +
   scale_color_manual(values=c("red","blue", "green4")) 
 
@@ -311,7 +311,7 @@ summary(aov_jmax) #no significant difference
 jmax <- ggplot(aci_parms, aes(x=location_type, Jmax, color=location_type)) + geom_boxplot(lwd=1) +
   ylab(expression(paste("Jmax (",mu, "mol",~ m^2, s^-1,")"))) +
   theme(legend.position = "none") +
-  xlab("Location Type") +
+  xlab("Ancestral Group") +
   theme(axis.title = element_text(size=15), axis.text = element_text(size=12)) +
   scale_color_manual(values=c("red","blue", "green4")) 
 
@@ -325,7 +325,7 @@ summary(aov_vcmax) #no significant difference
 vcmax <- ggplot(aci_parms, aes(x=location_type, Vcmax, color=location_type)) + geom_boxplot(lwd=1) +
   ylab(expression(paste("Vcmax (",mu, "mol",~ m^2, s^-1,")"))) +
   theme(legend.position = "none") +
-  xlab("Location Type") +
+  xlab("Ancestral Group") +
   theme(axis.title = element_text(size=15), axis.text = element_text(size=12)) +
   scale_color_manual(values=c("red","blue", "green4")) 
 
@@ -339,9 +339,9 @@ TukeyHSD(aov_6400_asat)
 
 asat_6400 <- ggplot(combined, aes(x=location_type, mean_Asat, color=location_type)) + geom_boxplot(lwd=1) +
   ylab(expression(paste("A in High Light (",mu, "mol",~ m^2, s^-1,")"))) +
-  guides(color = guide_legend(title = "Location Type")) +
+  guides(color = guide_legend(title = "Ancestral Group")) +
   theme(legend.position = c(0.78,0.78)) +
-  xlab("Location Type") +
+  xlab("Ancestral Group") +
   theme(axis.title = element_text(size=15), axis.text = element_text(size=12)) +
   scale_color_manual(values=c("red","blue", "green4", "darkorange")) +
   geom_signif(comparisons = list(c("North", "Southern desert"),
@@ -350,4 +350,4 @@ asat_6400 <- ggplot(combined, aes(x=location_type, mean_Asat, color=location_typ
             map_signif_level = TRUE,
             y_position = c(35,34,33), color = "black", size = 1, textsize = 5)
 
-ggarrange(asat, vcmax, jmax, asat_6400, ncol=4,labels = c("A", "B", "C", "D"))
+ggarrange(asat_6400, asat, vcmax, jmax, ncol=4, widths = c(1.5,1,1,1), labels = c("A", "B", "C", "D"))

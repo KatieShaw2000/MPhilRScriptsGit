@@ -18,6 +18,7 @@ library(plyr)
 library(lme4)
 library(inti)
 library(writexl)
+library(ggpubr)
 
 #get data ----
 
@@ -44,6 +45,19 @@ write_csv(reduced_df,"ACi_data_reduced.csv")
 #load as csv- needs to be read as csv to work for some reason
 
 to_fit <- read.csv("ACi_data_reduced.csv")
+
+#get example plot ----
+
+to_plot <- subset(to_fit, Plot == "1001")
+to_plot <- subset(to_plot, Repeat == "2")
+
+example <- ggplot(data = to_plot, aes(x = Ci, y = Photo)) +
+  xlab(expression(paste("Ci (",mu, "mol", ~"mol"  ^-1,")"))) +
+  ylab(expression(paste("A (",mu, "mol",~ m^2, s^-1,")"))) +
+  ylim(0, 50) +
+  geom_point(size=1, colour = "red")
+
+ggarrange(example, labels = c("B"))
 
 #fitting ----
 

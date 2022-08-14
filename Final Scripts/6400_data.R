@@ -16,6 +16,7 @@ library(lme4)
 library(inti)
 library(writexl)
 library(tidyverse)
+library(ggpubr)
 
 #get data ----
 
@@ -39,13 +40,35 @@ ACi_6400 <- ACi_6400[!ACi_6400$PlotRepeat %in% to_remove,]
 
 rm(to_remove)
 
-# get averages of last 10 points before end of light phase ----
+#get some example plots ----
+
+to_plot <- subset(ACi_6400, Plot == "1001")
+to_plot <- subset(to_plot, Repeat == "2")
+
+a <- ggplot(data = to_plot, aes(x = Elapsed_time, y = Photo)) +
+  xlab("Elapsed Time") + 
+  ylab(expression(paste("A (",mu, "mol",~ m^2, s^-1,")"))) +
+  ylim(0, 30) +
+  geom_point(size=0.5, colour = "red")
+
+#Gs with light drop 
+
+b <- ggplot(data = to_plot, aes(x = Elapsed_time, y = Cond, colour = Repeat)) +
+  xlab("Elapsed Time") + 
+  ylab(expression(paste("gs (",mol,~ m^2, s^-1,")"))) +
+  ylim(0, 0.75) +
+  geom_point(size=0.5, colour = "blue")
+
+ggarrange(a,b, nrow = 2, ncol = 1, labels = c("A", ""))
+
+s# get averages of last 10 points before end of light phase ----
 
 before_drop <- filter(ACi_6400, Light == "1800")
 before_drop <- filter(before_drop, Elapsed_time >= 372) #get last minute
 
 after_drop <- filter(ACi_6400, Light == "200")
 after_drop <- filter(after_drop, Elapsed_time >= 1020) #get last minute
+after_drop <- subset(after_drop, Photo >0) #get points where A is bigger than 0 only 
 
 mean_Asat <- ddply(before_drop, .(Plot, Repeat), summarise, mean_Asat = mean(Photo, na.rm = TRUE)) 
 mean_Alow <- ddply(after_drop, .(Plot, Repeat), summarise, mean_Alow = mean(Photo, na.rm = TRUE)) 

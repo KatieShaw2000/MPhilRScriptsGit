@@ -101,12 +101,14 @@ order_basic <- within(parms, Location <- factor(Location, levels = c("Desert", "
 asat_plot1 <- ggplot(order_parms, aes(x=Treatment, y=asat, color=Treatment)) + geom_boxplot() +
   facet_wrap(~Genotype + Location, ncol=4)+
   theme(legend.position = "none") +
-  ylab(expression(paste("asat (",mu, "mol",~ m^2, s^-1,")"))) +
+  ylim(0,28) +
+  ylab(expression(paste("Asat (",mu, "mol",~ m^2, s^-1,")"))) +
   scale_color_manual(values=c("red","blue")) 
 
 asat_plot2 <- ggplot(order_basic, aes(x=Treatment, y=asat, color = Treatment)) + geom_boxplot() +
   facet_wrap(~Location) + 
-  ylab(expression(paste("asat (",mu, "mol",~ m^2, s^-1,")"))) +
+  ylim(0,28) +
+  ylab(expression(paste("Asat (",mu, "mol",~ m^2, s^-1,")"))) +
   scale_color_manual(values=c("red","blue"))
 
 ggarrange(asat_plot1, asat_plot2, ncol = 2, labels = c("A", "B"))
@@ -131,11 +133,13 @@ mean_asat_coast_80 <- mean(parms[parms$Location == "Coastal" & parms$Treatment =
 vcmax_plot1 <- ggplot(order_parms, aes(x=Treatment, y=Vcmax, color=Treatment)) + geom_boxplot() +
   facet_wrap(~Genotype + Location, ncol=4)+
   theme(legend.position = "none") +
+  ylim(0,110) +
   ylab(expression(paste("Vcmax (",mu, "mol",~ m^2, s^-1,")"))) +
   scale_color_manual(values=c("red","blue")) 
 
 vcmax_plot2 <- ggplot(order_basic, aes(x=Treatment, y=Vcmax, color = Treatment)) + geom_boxplot() +
   facet_wrap(~Location) + 
+  ylim(0,110) +
   ylab(expression(paste("Vcmax (",mu, "mol",~ m^2, s^-1,")"))) +
   scale_color_manual(values=c("red","blue"))
 
@@ -286,12 +290,14 @@ mean_gs_coast_80 <- mean(parms[parms$Location == "Coastal" & parms$Treatment == 
 iwue_plot1 <- ggplot(order_parms, aes(x=Treatment, y=iWUE, color=Treatment)) + geom_boxplot() +
   facet_wrap(~Genotype + Location, ncol=4)+
   theme(legend.position = "none") +
-  ylab(expression(paste("iWUE (", mu, "mol ", "mol",~ m^2, s^-1,")"))) +
+  ylab(expression(paste("iWUE (", mu, "mol ", "mol"^"-1",")"))) +
+  ylim(0,150) +
   scale_color_manual(values=c("red","blue")) 
 
 iwue_plot2 <- ggplot(order_basic, aes(x=Treatment, y=iWUE, color = Treatment)) + geom_boxplot() +
   facet_wrap(~Location) + 
-  ylab(expression(paste("iWUE (", mu, "mol ", "mol",~ m^2, s^-1,")"))) +
+  ylab(expression(paste("iWUE (", mu, "mol ", "mol"^"-1",")"))) +
+  ylim(0,150) +
   scale_color_manual(values=c("red","blue"))
 
 ggarrange(iwue_plot1, iwue_plot2, ncol = 2, labels = c("A", "B"))
@@ -334,6 +340,9 @@ shapiro.test(residuals(lm(sl~Location*Treatment, data=parms)))
 plot(sl_interaction)
 
 parms <- parms[-c(2,22,71),]
+
+sl_interaction <- aov(sl ~ Location*Treatment + Treatment, data = parms)
+shapiro.test(residuals(lm(sl~Location*Treatment, data=parms)))
 
 summary(sl_interaction)
 

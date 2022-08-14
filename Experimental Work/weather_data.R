@@ -9,6 +9,7 @@ library(readxl)
 library(ggplot2)
 library(hms)
 library(ggpubr)
+library(lubridate)
 
 #Get tiny tag data ----
 
@@ -38,18 +39,41 @@ tiny_tag_night <- subset(tiny_tag, !(Hour >= 4 & Hour <= 19)) #get all other tim
 
 #Get light intensity data ----
 
+# light_data <- read.csv("Light_Intensity_Glasshouse.csv")
+# 
+# light_data$Date <- substr(light_data$Label, 1, 10) #get date and time from column
+# light_data$Time <- substr(light_data$Label, 12, 16)
+# 
+# light_data <- light_data[-c(1:3410),c(6,7,2,3,4,5)] #get data from my dates in the glasshouse and data frame in the order I want
+# 
+# light_data$Date <- as.Date(light_data$Date)
+# light_data$Total <- as.numeric(light_data$Total)
+# 
+# light_data$Hour <- substr(light_data$Time, 1,2) #getting hour column
+# light_data$Hour <- as.numeric(light_data$Hour)
+
+# get plot for my thesis ----
+
 light_data <- read.csv("Light_Intensity_Glasshouse.csv")
+light_data <- light_data[-c(1:3410),]
 
-light_data$Date <- substr(light_data$Label, 1, 10) #get date and time from column
-light_data$Time <- substr(light_data$Label, 12, 16)
-
-light_data <- light_data[-c(1:3410),c(6,7,2,3,4,5)] #get data from my dates in the glasshouse and data frame in the order I want
-
-light_data$Date <- as.Date(light_data$Date)
+light_data$Label <- dmy_hms(light_data$Label)
 light_data$Total <- as.numeric(light_data$Total)
 
-light_data$Hour <- substr(light_data$Time, 1,2) #getting hour column
-light_data$Hour <- as.numeric(light_data$Hour)
+names(light_data)[1] <- "Time"
+names(light_data)[2] <- "Light"
+
+light_data <- na.omit(light_data)
+
+ggplot(light_data, aes(x=Time, y=Light)) + geom_line(col="blue") +
+  ylab(~paste("PAR (", mu, "mol m"^-2,"s"^-1,')')) +
+  xlab("Date") +
+  scale_x_continuous(labels = c("21-Mar", "28-Mar", "04-Apr", "11-Apr", "18-Apr", "25-Apr", "02-May", "09-May", "16-May"), breaks = pretty(light_data$Time, n = 15)) +
+  theme(axis.text.x=element_text(angle=60, hjust=1, size=10),
+        axis.text.y = element_text(size = 10),
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_text(size = 12))
+#----
 
 light_data_day <- subset(light_data, Hour >= 4 & Hour <= 19) #get times between 4am and before 9pm
 light_data_night <- subset(light_data, !(Hour >= 4 & Hour <= 19)) #get all other times

@@ -17,6 +17,9 @@ combined <- merge(mass, area, by = "Number")
 names(combined)[3] <- "Location"
 combined$Treatment <- as.factor(combined$Treatment)
 
+combined$`Total leaf area` <- combined$`Total leaf area`/100
+combined$`Total leaf area` <- combined$`Total leaf area`/100
+
 #Export data ----
 
 write.csv(combined, "All Parameters/whole_plant.csv")
@@ -39,12 +42,12 @@ order_basic <- within(combined, Location <- factor(Location, levels = c("Desert"
 mass_plot1 <- ggplot(order_location_type, aes(x=Treatment, y=`Dried mass`, color=Treatment)) + geom_boxplot() +
   facet_wrap(~Genotype + Location, ncol=4)+
   theme(legend.position = "none") +
-  ylab("Total Aboveground Dried Biomass (g)") +
+  ylab("Total Aboveground Dry Mass (g)") +
   scale_color_manual(values=c("red","blue")) 
 
 mass_plot2 <- ggplot(order_basic, aes(x=Treatment, y=`Dried mass`, color=Treatment)) + geom_boxplot() +
   facet_wrap(~Location, ncol=4)+
-  ylab("Total Aboveground Dried Biomass (g)") +
+  ylab("Total Aboveground Dry Mass (g)") +
   scale_color_manual(values=c("red","blue")) 
 
 ggarrange(mass_plot1, mass_plot2, ncol = 2, labels = c("A", "B"))
@@ -52,12 +55,14 @@ ggarrange(mass_plot1, mass_plot2, ncol = 2, labels = c("A", "B"))
 area_plot1 <- ggplot(order_location_type, aes(x=Treatment, y=`Total leaf area`, color=Treatment)) + geom_boxplot() +
   facet_wrap(~Genotype + Location, ncol=4)+
   theme(legend.position = "none") +
-  ylab(expression(paste("Total Leaf Area (cm"^"2",")"))) +
+  ylim(0,0.022) +
+  ylab(expression(paste("Total Leaf Area (m"^"2",")"))) +
   scale_color_manual(values=c("red","blue")) 
 
 area_plot2 <- ggplot(order_basic, aes(x=Treatment, y=`Total leaf area`, color=Treatment)) + geom_boxplot() +
   facet_wrap(~Location, ncol=4)+
-  ylab(expression(paste("Total Leaf Area (cm"^"2",")"))) +
+  ylim(0,0.022) +
+  ylab(expression(paste("Total Leaf Area (m"^"2",")"))) +
   scale_color_manual(values=c("red","blue")) 
 
 ggarrange(area_plot1, area_plot2, ncol = 2, labels = c("A", "B"))

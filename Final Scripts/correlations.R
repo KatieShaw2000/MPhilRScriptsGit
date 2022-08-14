@@ -96,7 +96,9 @@ cor.test(NPQ$a_induction, NPQ$`log10(b_induction)`, method = "pearson")
 
 #ACi parameters: test for normality ----
 
-aci_accessions <- na.omit(all_blues)
+aci_accessions <- all_blues[,1:13]
+
+aci_accessions <- na.omit(aci_accessions)
 
 hist(aci_accessions$days_to_heading)
 shapiro.test(aci_accessions$days_to_heading) #not normally distributed --> log transformation doesn't make it normal so leave out of plot?
@@ -142,6 +144,7 @@ names(aci_accessions)[4] <- "high light A"
 names(aci_accessions)[5] <- "high light gs"
 names(aci_accessions)[6] <- "low light A"
 names(aci_accessions)[7] <- "low light gs"
+names(aci_accessions)[10] <- "Asat"
 
 aci_matrix <- cor.mtest(aci_accessions[,3:13], conf.level = 0.95)
 

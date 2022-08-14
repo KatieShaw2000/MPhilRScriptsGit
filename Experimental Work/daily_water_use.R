@@ -103,6 +103,10 @@ summary(final_water_data)
 final_water_data$Treatment <- as.factor(final_water_data$Treatment)
 final_water_data$Genotype <- as.factor(final_water_data$Genotype)
 
+#make final water data into litres not ml ----
+
+final_water_data[,5:40] <- final_water_data[,5:40]/1000
+
 #plot daily water use ----
 
 transpose <- as.data.frame(t(final_water_data))
@@ -134,7 +138,7 @@ order_merged <- within(merged, Genotype <- factor(Genotype, levels=c("B1K-05-12"
 
 ggplot(order_merged, aes(x=Day, y=daily_water_use, color=Treatment)) +
   xlab("Day of Watering Treatment") +
-  ylab("Daily Water Use (ml)") + geom_point() + geom_line(aes(x=Day, y=daily_water_use, group=Number)) +
+  ylab("Daily Water Use (l)") + geom_point() + geom_line(aes(x=Day, y=daily_water_use, group=Number)) +
   facet_wrap(~Genotype + Location, ncol=4)+
   scale_color_manual(values=c("red","blue")) 
 
@@ -158,12 +162,12 @@ order_basic <- within(final_water_data, Location <- factor(Location, levels = c(
 total_plot1 <- ggplot(order_data, aes(x=Treatment, y=total_water_use, color=Treatment)) + geom_boxplot() +
   facet_wrap(~Genotype + Location, ncol=4)+
   theme(legend.position = "none") +
-  ylab("Total Water Use (ml)") +
+  ylab("Total Water Use (l)") +
   scale_color_manual(values=c("red","blue")) 
 
 total_plot2 <- ggplot(order_basic, aes(x=Treatment, y=total_water_use, color = Treatment)) + geom_boxplot() +
   facet_wrap(~Location) + 
-  ylab("Total Water Use (ml)") +
+  ylab("Total Water Use (l)") +
   scale_color_manual(values=c("red","blue"))
 
 ggarrange(total_plot1, total_plot2, ncol = 2, labels = c("A", "B"))
@@ -213,12 +217,12 @@ order_basic_mass_water <- within(mass_water, Location <- factor(Location, levels
 norm_plot1 <- ggplot(order_mass_water, aes(x=Treatment, y=normalised, color=Treatment)) + geom_boxplot() +
   facet_wrap(~Genotype + Location, ncol=4)+
   theme(legend.position = "none") +
-  ylab(expression(paste("Normalised Water Use (ml"," g"^"-1","day"^"-1",")"))) +
+  ylab(expression(paste("Water use per unit aboveground dry mass (l"," g"^"-1","day"^"-1",")"))) +
   scale_color_manual(values=c("red","blue")) 
 
 norm_plot2 <- ggplot(order_basic_mass_water, aes(x=Treatment, y=normalised, color = Treatment)) + geom_boxplot() +
   facet_wrap(~Location) + 
-  ylab(expression(paste("Normalised Water Use (ml"," g"^"-1","day"^"-1",")"))) +
+  ylab(expression(paste("Water use per unit aboveground dry mass (l"," g"^"-1","day"^"-1",")"))) +
   scale_color_manual(values=c("red","blue"))
 
 ggarrange(norm_plot1, norm_plot2, ncol = 2, labels = c("A", "B"))

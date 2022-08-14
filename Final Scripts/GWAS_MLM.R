@@ -8,11 +8,11 @@ library(qqman)
 library(dplyr)
 
 # get data ----
-tassel <- read.table("MLM_output_B1K_hapmap_KNNimp_+_PC_B1K_hapmap_KNNimp_+_all_blues_stats.txt", header = T, sep = "\t")
+tassel <- read.table("output_14th_jun/output_all_blues_+_B1K_hapmap_KNNimp_+_PC_B1K_hapmap_KNNimp_stats.txt", header = T, sep = "\t")
 
 # heading date ----
 
-par(mfrow = c(3, 5))   
+par(mfrow = c(4, 5))   
 
 hd <-  tassel %>% filter(.$Trait == "days_to_heading")
 hd <- hd[-1,]
@@ -206,7 +206,7 @@ manhattan(asat, chr = "Chr", bp = "Pos", snp = "Marker", p = "p",
           genomewideline = F, suggestiveline = F, 
           annotateTop = T,
           highligh = asat_7_snps,
-          ylim=c(0,4), main = "asat")
+          ylim=c(0,4), main = "Asat")
 
 vcmax <-  tassel %>% filter(.$Trait == "Vcmax")
 vcmax <- vcmax[-1,]
@@ -235,3 +235,64 @@ manhattan(jmax, chr = "Chr", bp = "Pos", snp = "Marker", p = "p",
           annotateTop = T,
           highlight = jmax_7_snps,
           ylim=c(0,4), main = "Jmax")
+
+#6400 parameters ----
+
+mean_Asat <-  tassel %>% filter(.$Trait == "mean_Asat")
+mean_Asat <- mean_Asat[-1,]
+mean_Asat <- arrange(mean_Asat, p)
+
+mean_Asat_7_snps <- mean_Asat[1:7,2]
+
+manhattan(mean_Asat, chr = "Chr", bp = "Pos", snp = "Marker", p = "p",
+          logp = T, 
+          #col = c("red", "blue"),
+          genomewideline = F, suggestiveline = F, 
+          annotateTop = T,
+          highlight = mean_Asat_7_snps,
+          ylim=c(0,4), main = "A in High Light")
+
+mean_Alow <-  tassel %>% filter(.$Trait == "mean_Alow")
+mean_Alow <- mean_Alow[-1,]
+mean_Alow <- arrange(mean_Alow, p)
+
+mean_Alow_7_snps <- mean_Alow[1:7,2]
+
+manhattan(mean_Alow, chr = "Chr", bp = "Pos", snp = "Marker", p = "p",
+          logp = T, 
+          #col = c("red", "blue"),
+          genomewideline = F, suggestiveline = F, 
+          annotateTop = T,
+          highlight = mean_Alow_7_snps,
+          ylim=c(0,4), main = "A in Low Light")
+
+mean_gs_Asat <-  tassel %>% filter(.$Trait == "mean_gs_Asat")
+mean_gs_Asat <- mean_gs_Asat[-1,]
+mean_gs_Asat <- arrange(mean_gs_Asat, p)
+
+mean_gs_Asat_7_snps <- mean_gs_Asat[1:7,2]
+
+manhattan(mean_gs_Asat, chr = "Chr", bp = "Pos", snp = "Marker", p = "p",
+          logp = T, 
+          #col = c("red", "blue"),
+          genomewideline = F, suggestiveline = F, 
+          annotateTop = T,
+          highlight = mean_gs_Asat_7_snps,
+          ylim=c(0,4), main = "gs in High Light")
+
+mean_gs_Alow <-  tassel %>% filter(.$Trait == "mean_gs_Alow")
+mean_gs_Alow <- mean_gs_Alow[-1,]
+mean_gs_Alow <- arrange(mean_gs_Alow, p)
+
+mean_gs_Alow_7_snps <- mean_gs_Alow[1:7,2]
+
+manhattan(mean_gs_Alow, chr = "Chr", bp = "Pos", snp = "Marker", p = "p",
+          logp = T, 
+          #col = c("red", "blue"),
+          genomewideline = F, suggestiveline = F, 
+          annotateTop = T,
+          highlight = mean_gs_Alow_7_snps,
+          ylim=c(0,5), main = "gs in Low Light")
+
+
+
